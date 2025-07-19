@@ -8,10 +8,10 @@
     "esModuleInterop": true,
     "noEmit": true,
     "allowImportingTsExtensions": true,
+    "rootDir": "src",
     "outDir": "dist",
     "lib": [ "esnext" ],
-    "types": [ "node" ],
-    "baseUrl": "./",
+    "types": [ "node", "jest" ],
     /* Strict Type-Checking Options */
     "noImplicitAny": true /* Raise error on expressions and declarations with an implied 'any' type. */,
     "strictNullChecks": true /* Enable strict null checks. */,
