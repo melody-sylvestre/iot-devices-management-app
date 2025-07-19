@@ -1,12 +1,13 @@
-import express from "express"
-import { healthCheck } from "./handlers/health.ts"
-import { getDevices } from "./handlers/getDevices.ts"
+import express from "express";
+import { healthCheck } from "./handlers/health.ts";
+import { getDevices } from "./handlers/getDevices.ts";
 
-//TODO: do a clever thing with dotenv? 
+const app = express();
 
-const app = express()
-app.get('/health', healthCheck)
-app.get('/devices', getDevices)
+// Routes
+app.get("/health", healthCheck);
+app.get("/devices", getDevices);
 
-console.log("iot hub api is ready")
-app.listen(3000)
+console.log("iot hub api is ready");
+// IDEA: add port in config file?
+app.listen(3000);
