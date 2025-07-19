@@ -1,4 +1,4 @@
-import { newDeviceSchema, type DeviceRequest } from "../types.ts";
+import { newDeviceSchema, type DeviceRequest } from "../types";
 
 export const validateAndParseNewDevice = (input: any): DeviceRequest => {
   const newDeviceRequest = newDeviceSchema.safeParse(input);

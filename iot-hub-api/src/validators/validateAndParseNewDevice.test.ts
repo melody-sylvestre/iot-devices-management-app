@@ -1,5 +1,5 @@
 import { validateAndParseNewDevice } from "./validateAndParseNewDevice";
-import { newTestDevice } from "../testUtils/devices.ts";
+import { newTestDevice } from "../testUtils/devices";
 
 describe("validateAndParseNewDevice", () => {
   test("if the input as the correct format, it returns a DeviceRequestObject", () => {

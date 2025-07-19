@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
-import { validateAndParseNewDevice } from "../validators/index.ts";
-// import { Device } from "@prisma/client";
+import { validateAndParseNewDevice } from "../validators";
+import { Device } from "@prisma/client";
 // FIXME: fix imports to commonjs so that I can use the type from prisma
-import type { Device } from "../types.ts";
-import { prismaClient } from "../prisma/client.ts";
+import type { DeviceRequest } from "../types.ts";
+import { prismaClient } from "../prisma/client";
 import { v4 } from "uuid";
 
 export const registerDevice = async (request: Request, response: Response) => {
@@ -13,7 +13,11 @@ export const registerDevice = async (request: Request, response: Response) => {
   try {
     newDevice = validateAndParseNewDevice(data);
   } catch (error) {
-    response.status(400).json({ message: error.message, data: null });
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "An error occured while validating the details of the new device.";
+    response.status(400).json({ message: errorMessage, data: null });
     return;
   }
 
@@ -53,4 +57,8 @@ export const registerDevice = async (request: Request, response: Response) => {
   //    create record in devices - get id
   //    create record in matching table
   // return new record
+};
+
+const buildCreateRequest = (newDevice: DeviceRequest) => {
+  const newID = v4();
 };

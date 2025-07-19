@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { getDevices } from "./getDevices";
-import { testDevices } from "../testUtils/devices.ts";
+import { testDevices } from "../testUtils/devices";
 import { prismaClient } from "../prisma/client";
 jest.mock("../prisma/client.ts");
 

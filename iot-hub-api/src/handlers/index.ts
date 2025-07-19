@@ -1,2 +1,2 @@
-export { getDevices } from "./getDevices.ts";
-export { registerDevice } from "./registerDevice.ts";
+export { getDevices } from "./getDevices";
+export { registerDevice } from "./registerDevice";

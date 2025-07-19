@@ -1,5 +1,6 @@
 import express from "express";
-import { getDevices, registerDevice } from "./handlers/index.ts";
+import { getDevices } from "./handlers/index.ts";
+import { registerDevice } from "./handlers/index.ts";
 
 const app = express();
 

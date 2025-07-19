@@ -1,1 +1,1 @@
-export { validateAndParseNewDevice } from "./validateAndParseNewDevice.ts";
+export { validateAndParseNewDevice } from "./validateAndParseNewDevice";
