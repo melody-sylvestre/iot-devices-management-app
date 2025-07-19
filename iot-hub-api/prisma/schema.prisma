@@ -8,28 +8,28 @@ datasource db {
 }
 
 model Device {
-    id          String        @id @default(cuid())
-    name        String        @unique
-    type        String
+    id          String       @id @default(uuid()) @db.Uuid
+    name        String       @unique @db.VarChar(255)
+    type        String       @db.VarChar(255)
     is_enabled  Boolean
-    LightSwitch LightSwitch[]
+    LightSwitch LightSwitch?
     Thermostat  Thermostat?
 
     @@map("devices")
 }
 
 model LightSwitch {
-    device_id String  @unique
-    is_on     Boolean
-    device    Device  @relation(fields: [device_id], references: [id])
+    device_id String   @unique @db.Uuid
+    is_on     Boolean?
+    device    Device   @relation(fields: [device_id], references: [id])
 
     @@map("light_switches")
 }
 
 model Thermostat {
-    device_id     String @unique
-    current_value Float
-    target_value  Float
+    device_id     String @unique @db.Uuid
+    current_value Float?
+    target_value  Float?
     device        Device @relation(fields: [device_id], references: [id])
 
     @@map("thermostats")

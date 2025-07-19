@@ -24,5 +24,5 @@ npx prisma migrate dev
 Pushing changes to the DB schema:
 
 - make changes to `prisma/schema.prisma`
-- create a migration file with `npx prisma migrate dev --name [description of migration]`
+- create a migration file with `npx prisma migrate dev`
 - `npx prisma generate`
