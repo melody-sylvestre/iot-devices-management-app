@@ -11,6 +11,7 @@ export const getDevices = async (request: Request, response: Response) => {
       data: allDevices,
     });
   } catch (error) {
+    console.log(error);
     response.status(500).json({
       message: "Error: could not retrieve list of devices.",
       data: [],

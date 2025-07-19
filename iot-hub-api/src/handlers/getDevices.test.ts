@@ -42,7 +42,9 @@ describe("getDevices", () => {
 
   test("It returns null and a 500 status if records could not be fetched from the database.", async () => {
     const req = {} as any as Request;
-    jest.mocked(prismaClient.device.findMany).mockRejectedValue([]);
+    jest
+      .mocked(prismaClient.device.findMany)
+      .mockRejectedValue(new Error("Error!"));
 
     await getDevices(req, res as Response);
 

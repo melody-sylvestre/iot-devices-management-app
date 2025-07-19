@@ -5,6 +5,7 @@ import { getDevices } from "./handlers/getDevices.ts";
 const app = express();
 
 // Routes
+//TODELETE:
 app.get("/health", healthCheck);
 app.get("/devices", getDevices);
 
