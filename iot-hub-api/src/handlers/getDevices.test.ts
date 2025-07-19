@@ -16,39 +16,39 @@ describe("getDevices", () => {
 
   test("If there are devices records in the database, it returns them as a list with a 200 status.", async () => {
     const req = {} as any as Request;
-
     jest.mocked(prismaClient.device.findMany).mockResolvedValue(testDevices);
 
     await getDevices(req, res as Response);
+
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
-      message: `Found ${testDevices.length} devices`,
+      message: `Found ${testDevices.length} devices.`,
       data: testDevices,
     });
   });
 
-  test("If there are no devices record in the database, it returns an empty list with a 200 status.", () => {
+  test("If there are no devices record in the database, it returns an empty list with a 200 status.", async () => {
     const req = {} as any as Request;
-    const res = {} as any as Response;
+    jest.mocked(prismaClient.device.findMany).mockResolvedValue([]);
 
-    //TODO: mock Prisma Client response
-    getDevices(req, res);
+    await getDevices(req, res as Response);
+
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
-      message: "Found 0 devices",
+      message: "Found 0 devices.",
       data: [],
     });
   });
 
-  test("It returns null and a 500 status if records could not be fetched from the database.", () => {
+  test("It returns null and a 500 status if records could not be fetched from the database.", async () => {
     const req = {} as any as Request;
-    const res = {} as any as Response;
+    jest.mocked(prismaClient.device.findMany).mockRejectedValue([]);
 
-    //TODO: mock Prisma Client response
-    getDevices(req, res);
+    await getDevices(req, res as Response);
+
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
-      message: "Error: could not retrieve list of devices",
+      message: "Error: could not retrieve list of devices.",
       data: [],
     });
   });
