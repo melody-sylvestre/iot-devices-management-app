@@ -1,15 +1,38 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
 datasource db {
     provider = "postgresql"
     url      = env("DB_URL")
 }
 
 model Device {
-    id         String  @id @default(cuid())
-    name       String  @unique
-    type       String
-    is_enabled Boolean
+    id          String        @id @default(cuid())
+    name        String        @unique
+    type        String
+    is_enabled  Boolean
+    LightSwitch LightSwitch[]
+    Thermostat  Thermostat?
 
     @@map("devices")
+}
+
+model LightSwitch {
+    device_id String  @unique
+    is_on     Boolean
+    device    Device  @relation(fields: [device_id], references: [id])
+
+    @@map("light_switches")
+}
+
+model Thermostat {
+    device_id     String @unique
+    current_value Float
+    target_value  Float
+    device        Device @relation(fields: [device_id], references: [id])
+
+    @@map("thermostats")
 }
 
 //TODO: enum for type?
