@@ -1,0 +1,15 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DB_URL")
+}
+
+model Device {
+    id         String  @id @default(cuid())
+    name       String  @unique
+    type       String
+    is_enabled Boolean
+
+    @@map("devices")
+}
+
+//TODO: enum for type?
