@@ -5,13 +5,19 @@ export const testDevices: Array<Device> = [
   {
     id: v4(),
     name: "Kitchen Light",
-    type: "LIGHT SWITCH",
+    type: "Light Switch",
     is_enabled: true,
   },
   {
     id: v4(),
     name: "Master Bedroom Thermostat",
-    type: "THERMOSTAT",
+    type: "Thermostat",
     is_enabled: false,
   },
 ];
+
+export const newTestDevice = {
+  name: "Test",
+  type: "Thermostat",
+  is_enabled: true,
+};
