@@ -4,6 +4,7 @@ import { testDevices } from "../testUtils/devices.ts";
 import { prismaClient } from "../prisma/client";
 jest.mock("../prisma/client.ts");
 
+// TODO: check tests and whether their consistent with the ones from getDevices
 describe("getDevices", () => {
   let res: Partial<Response>;
 
@@ -51,7 +52,7 @@ describe("getDevices", () => {
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
       message: "Error: could not retrieve list of devices.",
-      data: [],
+      data: null,
     });
   });
 });
