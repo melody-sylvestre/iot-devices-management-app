@@ -1,13 +1,5 @@
 import * as z from "zod";
 
-// TODELETE:
-export type Device = {
-  id: string;
-  name: string;
-  type: string;
-  is_enabled: boolean;
-};
-
 // FIXME: is there a way to make this dry-er?
 const DEVICE_TYPES = ["Thermostat", "Light Switch"] as const;
 type DeviceType = "Thermostat" | "Light Switch";
@@ -25,8 +17,8 @@ export const deviceSchema = z
 
 export const thermostatSchema = deviceSchema.extend({
   ...deviceSchema.shape,
-  current_value_1: z.number(),
-  target_value_1: z.number().gte(5).lte(30),
+  current_value_1: z.number().nullable(),
+  target_value_1: z.number().gte(5).lte(30).nullable(),
 });
 
 export const lightSwitchSchema = deviceSchema.extend({

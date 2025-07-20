@@ -2,11 +2,12 @@ import { Request, Response } from "express";
 import { getDevices } from "./getDevices";
 import { testDevices } from "../testUtils/devices";
 import { prismaClient } from "../prisma/client";
+import { mapDeviceDataToDeviceModel } from "../formatters/mapDeviceDataToDeviceModel";
+import { mapDeviceModelToDeviceData } from "../formatters";
+import { v4 } from "uuid";
+
 jest.mock("../prisma/client.ts");
 
-// FIXME: testDevices should be an array of Device (the prisma generated type)
-
-// TODO: check tests and whether their consistent with the ones from getDevices
 describe("getDevices", () => {
   let res: Partial<Response>;
 
@@ -17,9 +18,14 @@ describe("getDevices", () => {
     };
   });
 
-  test("If there are devices records in the database, it returns them as a list with a 200 status.", async () => {
+  test("If there are devices records in the database and they are all valid, it returns them as a list with a 200 status.", async () => {
     const req = {} as any as Request;
-    jest.mocked(prismaClient.device.findMany).mockResolvedValue(testDevices);
+    const testDevicesAsDbRecords = testDevices.map((device) => {
+      return mapDeviceDataToDeviceModel(device);
+    });
+    jest
+      .mocked(prismaClient.device.findMany)
+      .mockResolvedValue(testDevicesAsDbRecords);
 
     await getDevices(req, res as Response);
 
@@ -47,14 +53,36 @@ describe("getDevices", () => {
     const req = {} as any as Request;
     jest
       .mocked(prismaClient.device.findMany)
-      .mockRejectedValue(new Error("Error!"));
+      .mockRejectedValue(new Error("Error message!"));
 
     await getDevices(req, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
-      message: "Error: could not retrieve list of devices.",
+      message: "Error: could not retrieve list of devices. Error message!",
       data: null,
+    });
+  });
+
+  test("If some records are inconsistent with the validation rules, it returns the valid records, a 500 status and an error message with the id of the invalid records", async () => {
+    const validDbRecord = mapDeviceDataToDeviceModel(testDevices[0]);
+    const id = v4();
+    const invalidDbRecord = {
+      ...mapDeviceDataToDeviceModel(testDevices[1]),
+      type: "Obsolete device",
+      id: id,
+    };
+    const dbRecords = [validDbRecord, invalidDbRecord];
+
+    const req = {} as any as Request;
+    jest.mocked(prismaClient.device.findMany).mockResolvedValue(dbRecords);
+
+    await getDevices(req, res as Response);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({
+      message: `Found 1 valid devices and 1 invalid records. ${id}: Error: Obsolete device is not a supported device type. `,
+      data: [mapDeviceModelToDeviceData(validDbRecord)],
     });
   });
 });

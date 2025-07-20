@@ -16,24 +16,32 @@ export const getDevices = async (_request: Request, response: Response) => {
     console.log(message);
 
     let formattingErrors = "";
-    const allDevicesFormattedData = allDevices.map((device) => {
+    let allDevicesFormattedData = [];
+
+    for (const device of allDevices) {
       let data;
+
       try {
         data = mapDeviceModelToDeviceData(device);
       } catch (e) {
+        //NOTE: this will trigger if some database records become somehow inconsistent with the validation schema
         let errorMessage =
           e instanceof Error ? e.message : "met an error while formatting data";
-        formattingErrors += `${device.id}: ${errorMessage} ; `;
+        formattingErrors += `${device.id}: ${errorMessage} `;
+        continue;
       }
-      return data;
-    });
+      allDevicesFormattedData.push(data);
+    }
 
     if (formattingErrors) {
       console.log(formattingErrors);
+      message = `Found ${allDevicesFormattedData.length} valid devices and ${
+        allDevices.length - allDevicesFormattedData.length
+      } invalid records. ${formattingErrors}`;
       statusCode = 500;
     }
 
-    response.status(200).json({
+    response.status(statusCode).json({
       message: message,
       data: allDevicesFormattedData,
     });
@@ -41,7 +49,6 @@ export const getDevices = async (_request: Request, response: Response) => {
     const errorMessage = error instanceof Error ? error.message : "";
     message = `Error: could not retrieve list of devices. ${errorMessage}`;
     console.log(message);
-    console.log(error);
 
     response.status(500).json({
       message: message,
