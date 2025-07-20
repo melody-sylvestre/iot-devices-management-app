@@ -1,0 +1,1 @@
+export { mapDeviceModelToDeviceData } from "./mapDeviceModelToDeviceData";
