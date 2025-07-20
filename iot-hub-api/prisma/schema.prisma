@@ -8,31 +8,15 @@ datasource db {
 }
 
 model Device {
-    id          String       @id @default(uuid()) @db.Uuid
-    name        String       @unique @db.VarChar(255)
-    type        String       @db.VarChar(255)
-    is_enabled  Boolean
-    LightSwitch LightSwitch?
-    Thermostat  Thermostat?
+    id                     String   @id @default(uuid()) @db.Uuid
+    name                   String   @unique @db.VarChar(255)
+    type                   String   @db.VarChar(255)
+    is_enabled             Boolean
+    is_on                  Boolean?
+    current_value_1        Float?
+    target_value_1         Float?
+    setting_as_int_scale_1 Int?
+    setting_as_string_1    String?  @db.VarChar(255)
 
     @@map("devices")
 }
-
-model LightSwitch {
-    device_id String   @unique @db.Uuid
-    is_on     Boolean?
-    device    Device   @relation(fields: [device_id], references: [id])
-
-    @@map("light_switches")
-}
-
-model Thermostat {
-    device_id     String @unique @db.Uuid
-    current_value Float?
-    target_value  Float?
-    device        Device @relation(fields: [device_id], references: [id])
-
-    @@map("thermostats")
-}
-
-//TODO: enum for type?

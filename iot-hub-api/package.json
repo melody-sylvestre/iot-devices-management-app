@@ -5,10 +5,13 @@
   "scripts": {
     "test": "jest"
   },
+  "prisma": {
+    "schema": "./prisma/schema.prisma"
+  },
   "keywords": [],
-  "author": "",
+  "author": "Melody Sylvestre",
   "license": "ISC",
-  "description": "",
+  "description": "An API to control IoT devices in a smart home",
   "dependencies": {
     "@prisma/client": "^6.12.0",
     "@types/uuid": "^10.0.0",

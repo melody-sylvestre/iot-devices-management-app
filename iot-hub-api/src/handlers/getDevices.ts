@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { prismaClient } from "../prisma/client";
 
 export const getDevices = async (_request: Request, response: Response) => {
+  // TODO: add sme logging
   let allDevices = [];
 
   try {
