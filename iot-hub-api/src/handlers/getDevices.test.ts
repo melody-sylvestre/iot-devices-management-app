@@ -4,6 +4,8 @@ import { testDevices } from "../testUtils/devices";
 import { prismaClient } from "../prisma/client";
 jest.mock("../prisma/client.ts");
 
+// FIXME: testDevices should be an array of Device (the prisma generated type)
+
 // TODO: check tests and whether their consistent with the ones from getDevices
 describe("getDevices", () => {
   let res: Partial<Response>;

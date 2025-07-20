@@ -2,19 +2,27 @@ import type { Request, Response } from "express";
 import { prismaClient } from "../prisma/client";
 
 export const getDevices = async (_request: Request, response: Response) => {
-  // TODO: add sme logging
+  console.log("Fetching devices list...");
   let allDevices = [];
+  let message = "";
 
   try {
     allDevices = await prismaClient.device.findMany();
+    message = `Found ${allDevices.length} devices.`;
+    console.log(message);
+
     response.status(200).json({
-      message: `Found ${allDevices.length} devices.`,
+      message: message,
       data: allDevices,
     });
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "";
+    message = `Error: could not retrieve list of devices. ${errorMessage}`;
+    console.log(message);
     console.log(error);
+
     response.status(500).json({
-      message: "Error: could not retrieve list of devices.",
+      message: message,
       data: null,
     });
   }
