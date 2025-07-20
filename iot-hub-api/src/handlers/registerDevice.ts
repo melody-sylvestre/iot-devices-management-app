@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
-import { validateAndParseNewDevice } from "../validators";
+import { validateAndParseNewDevice } from "../validators/validateAndParseNewDevice";
 import { Device } from "@prisma/client";
 // FIXME: fix imports to commonjs so that I can use the type from prisma
-import type { DeviceRequest } from "../types.ts";
+// import type { DeviceRequest } from "../types";
 import { prismaClient } from "../prisma/client";
 import { v4 } from "uuid";
 
@@ -59,6 +59,6 @@ export const registerDevice = async (request: Request, response: Response) => {
   // return new record
 };
 
-const buildCreateRequest = (newDevice: DeviceRequest) => {
-  const newID = v4();
-};
+// const buildCreateRequest = (newDevice: DeviceRequest) => {
+//   const newID = v4();
+// };
