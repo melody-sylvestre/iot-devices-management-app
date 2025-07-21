@@ -1,0 +1,1 @@
+export { validateAndParseNewDevice } from "./validateAndParseNewDevice";

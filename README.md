@@ -7,7 +7,7 @@ An app to manage IoT devices in a smart home
 ## Prerequisites
 
 - Docker
-- Node 24?
+- Node 22.5.0?
 
 ## How to run
 

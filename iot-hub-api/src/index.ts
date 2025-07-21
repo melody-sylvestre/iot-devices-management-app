@@ -1,14 +1,15 @@
 import express from "express";
-import { healthCheck } from "./handlers/health.ts";
-import { getDevices } from "./handlers/getDevices.ts";
+import { getDevices } from "./handlers";
+// import { registerDevice } from "./handlers";
 
 const app = express();
 
-// Routes
-//TODELETE:
-app.get("/health", healthCheck);
-app.get("/devices", getDevices);
+app.use(express.json());
 
-console.log("iot hub api is ready");
+// Routes
+app.get("/devices", getDevices);
+// sapp.post("/devices", registerDevice);
+
+console.log("iot-hub API is ready");
 // IDEA: add port in config file?
 app.listen(3000);
