@@ -29,7 +29,7 @@ describe("deviceRequestToDeviceType", () => {
     expect(() => {
       mapDeviceDataToDeviceModel(badDevice);
     }).toThrow(
-      'id: Invalid input: expected string, received undefined ; type: Invalid option: expected one of "Thermostat"|"Light Switch" ; is_enabled: Invalid input: expected boolean, received undefined ;'
+      '✖ Invalid input: expected string, received undefined\n  → at id\n✖ Invalid option: expected one of "Thermostat"|"Light Switch"\n  → at type\n✖ Invalid input: expected boolean, received undefined\n  → at is_enabled'
     );
   });
 });

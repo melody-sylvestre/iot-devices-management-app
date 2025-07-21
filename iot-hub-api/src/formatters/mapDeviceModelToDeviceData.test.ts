@@ -17,7 +17,7 @@ describe("mapDeviceModelToDeviceData", () => {
     expect(() => {
       mapDeviceModelToDeviceData(dbRecord);
     }).toThrow(
-      "Error: could not parse the data following the Thermostat schema; id: Invalid UUID ; name: Too small: expected string to have >=1 characters ; current_value_1: Invalid input: expected number, received null ; target_value_1: Invalid input: expected number, received null ;"
+      "Error: could not parse the data following the Thermostat schema: \n ✖ Invalid UUID\n  → at id\n✖ Too small: expected string to have >=1 characters\n  → at name\n✖ Invalid input: expected number, received null\n  → at current_value_1"
     );
   });
 
