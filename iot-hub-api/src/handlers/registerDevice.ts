@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { prismaClient } from "../prisma/client";
-
+import { v4 } from "uuid";
 import {
   mapDeviceDataToDeviceModel,
   mapDeviceModelToDeviceData,
@@ -19,6 +19,8 @@ export const registerDevice = async (request: Request, response: Response) => {
     response.status(400).json({ message: errorMessage, data: null });
     return;
   }
+
+  newDevice.id = v4();
 
   let registeredDevice;
   try {

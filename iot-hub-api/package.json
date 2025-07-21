@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "dev" : "ts-node ./src/index.ts"
+    "start" : "ts-node ./src/index.ts"
   },
   "prisma": {
     "schema": "./prisma/schema.prisma"

@@ -1,6 +1,5 @@
 import express from "express";
-import { getDevices } from "./handlers";
-// import { registerDevice } from "./handlers";
+import { getDevices, registerDevice } from "./handlers";
 
 const app = express();
 
@@ -8,7 +7,7 @@ app.use(express.json());
 
 // Routes
 app.get("/devices", getDevices);
-// sapp.post("/devices", registerDevice);
+app.post("/devices", registerDevice);
 
 console.log("iot-hub API is ready");
 // IDEA: add port in config file?

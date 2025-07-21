@@ -5,7 +5,7 @@ import { mapDeviceDataToDeviceModel } from "./mapDeviceDataToDeviceModel";
 import { v4 } from "uuid";
 
 describe("mapDeviceDataToDeviceModel", () => {
-  test("When provided with an object representing a device request, it returns an object of Device type, with the missing properties set to null", () => {
+  test("When provided with an object representing a device data, it returns an object of Device type, with the missing properties set to null or empty strings", () => {
     const testDevice = {
       id: v4(),
       name: "Kitchen Light",
@@ -37,7 +37,7 @@ describe("mapDeviceDataToDeviceModel", () => {
     expect(() => {
       mapDeviceDataToDeviceModel(badDevice);
     }).toThrow(
-      "✖ Invalid input: expected string, received undefined\n  → at id\n✖ Invalid input: expected boolean, received undefined\n  → at is_enabled\n✖ Invalid input: expected boolean, received undefined\n  → at is_on"
+      "✖ Invalid input: expected boolean, received undefined\n  → at is_enabled\n✖ Invalid input: expected boolean, received undefined\n  → at is_on"
     );
   });
 });

@@ -17,10 +17,8 @@ export const mapDeviceDataToDeviceModel = (deviceData: any): Device => {
 
   if (!validDeviceData.success) {
     const message = z.prettifyError(validDeviceData.error);
-    console.log(JSON.stringify(message));
     throw new Error(message);
   }
-
   const deviceAsDeviceType = { ...defaultDevice, ...deviceData };
   return deviceAsDeviceType;
 };

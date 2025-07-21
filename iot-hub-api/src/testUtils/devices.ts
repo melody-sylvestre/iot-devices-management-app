@@ -18,9 +18,3 @@ export const testDevices: Array<Partial<Device>> = [
     target_value_1: 15,
   },
 ];
-
-// export const newTestDevice = {
-//   name: "Test",
-//   type: "Thermostat",
-//   is_enabled: true,
-// };
