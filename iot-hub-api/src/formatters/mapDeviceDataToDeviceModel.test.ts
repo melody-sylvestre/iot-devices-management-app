@@ -23,13 +23,21 @@ describe("mapDeviceDataToDeviceModel", () => {
     );
   });
 
+  test("If the object does not have the property type, or if this type is not supported, it throws an error", () => {
+    const badDevice = { name: "Weird Device", type: "UFO" };
+
+    expect(() => {
+      mapDeviceDataToDeviceModel(badDevice);
+    }).toThrow(`Error: UFO is not a supported device type.`);
+  });
+
   test("If a required property is missing from the device request, it throws an error", () => {
-    const badDevice = { name: "badDevice" };
+    const badDevice = { name: "badDevice", type: "Light Switch" };
 
     expect(() => {
       mapDeviceDataToDeviceModel(badDevice);
     }).toThrow(
-      '✖ Invalid input: expected string, received undefined\n  → at id\n✖ Invalid option: expected one of "Thermostat"|"Light Switch"\n  → at type\n✖ Invalid input: expected boolean, received undefined\n  → at is_enabled'
+      "✖ Invalid input: expected string, received undefined\n  → at id\n✖ Invalid input: expected boolean, received undefined\n  → at is_enabled\n✖ Invalid input: expected boolean, received undefined\n  → at is_on"
     );
   });
 });

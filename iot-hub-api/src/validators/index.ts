@@ -1,1 +1,0 @@
-export { validateAndParseNewDevice } from "./validateAndParseNewDevice";
