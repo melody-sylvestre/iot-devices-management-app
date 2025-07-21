@@ -1,6 +1,7 @@
 import { DEVICE_VALIDATION_RULES } from "../definitions/types";
 import { Device } from "@prisma/client";
 import * as z from "zod";
+
 export const mapDeviceModelToDeviceData = (dbRecord: Device) => {
   if (!Object.keys(DEVICE_VALIDATION_RULES).includes(dbRecord.type)) {
     const message = `Error: ${dbRecord.type} is not a supported device type.`;

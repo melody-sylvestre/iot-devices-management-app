@@ -2,8 +2,6 @@ import type { Request, Response } from "express";
 import { prismaClient } from "../prisma/client";
 import { mapDeviceModelToDeviceData } from "../formatters";
 
-//TODO: what logic if some db record can't be parsed?
-
 export const getDevices = async (_request: Request, response: Response) => {
   console.log("Fetching devices list...");
   let allDevices = [];
@@ -24,7 +22,7 @@ export const getDevices = async (_request: Request, response: Response) => {
       try {
         data = mapDeviceModelToDeviceData(device);
       } catch (e) {
-        //NOTE: this will trigger if some database records become somehow inconsistent with the validation schema
+        //NOTE: this will trigger if some database records become nconsistent with the validation schema
         let errorMessage =
           e instanceof Error ? e.message : "met an error while formatting data";
         formattingErrors += `${device.id}: ${errorMessage} `;

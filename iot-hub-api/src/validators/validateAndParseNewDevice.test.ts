@@ -1,3 +1,6 @@
+//TODELETE:
+
+test("fake test", () => {});
 // import { validateAndParseNewDevice } from "./validateAndParseNewDevice";
 // import { newTestDevice } from "../testUtils/devices";
 

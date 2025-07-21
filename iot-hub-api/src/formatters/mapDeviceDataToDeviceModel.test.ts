@@ -4,7 +4,7 @@ import { mapDeviceDataToDeviceModel } from "./mapDeviceDataToDeviceModel";
 
 import { v4 } from "uuid";
 
-describe("deviceRequestToDeviceType", () => {
+describe("mapDeviceDataToDeviceModel", () => {
   test("When provided with an object representing a device request, it returns an object of Device type, with the missing properties set to null", () => {
     const testDevice = {
       id: v4(),
@@ -13,13 +13,13 @@ describe("deviceRequestToDeviceType", () => {
       is_enabled: true,
       is_on: true,
     };
-    const testDeviceAsDeviceType: Device = {
+    const testDeviceAsDeviceModel: Device = {
       ...defaultDevice,
       ...testDevice,
     };
 
     expect(mapDeviceDataToDeviceModel(testDevice)).toStrictEqual(
-      testDeviceAsDeviceType
+      testDeviceAsDeviceModel
     );
   });
 

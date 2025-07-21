@@ -1,7 +1,3 @@
-//FIXME: we should use the Device type from prisma
-
-// TODELETE:
-// import type { Device } from "../types.ts";
 import { Device } from "@prisma/client";
 import { v4 } from "uuid";
 

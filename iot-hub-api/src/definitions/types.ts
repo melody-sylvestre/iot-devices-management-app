@@ -3,6 +3,8 @@ import * as z from "zod";
 const DEVICE_TYPES = ["Thermostat", "Light Switch"] as const;
 type DeviceType = "Thermostat" | "Light Switch";
 
+// NOTE: All devices validation schemas mut be defined as extension of the device schema
+
 export const deviceSchema = z
   .object({
     id: z.uuid(),
@@ -11,8 +13,6 @@ export const deviceSchema = z
     is_enabled: z.boolean(),
   })
   .required();
-
-// NOTE: All devices validation schemas mut be defined as extension of the device schema
 
 export const thermostatSchema = deviceSchema.extend({
   ...deviceSchema.shape,
