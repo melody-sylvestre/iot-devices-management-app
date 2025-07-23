@@ -4,8 +4,11 @@ import { v4 } from "uuid";
 import { mapDeviceDataToDeviceModel } from "../formatters";
 
 export const registerDevice = async (request: Request, response: Response) => {
+  console.log("Parsing new device details...");
+
   const data = request.body;
   let newDevice;
+
   try {
     newDevice = mapDeviceDataToDeviceModel(data);
   } catch (error) {
@@ -17,9 +20,11 @@ export const registerDevice = async (request: Request, response: Response) => {
     return;
   }
 
-  newDevice.id = v4();
+  console.log("Attempting to add new device to the database.");
 
+  newDevice.id = v4();
   let registeredDevice;
+
   try {
     registeredDevice = await prismaClient.device.create({
       data: { ...newDevice },
