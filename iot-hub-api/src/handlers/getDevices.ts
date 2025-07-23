@@ -2,6 +2,8 @@ import type { Request, Response } from "express";
 import { prismaClient } from "../prisma/client";
 import { mapDeviceModelToDeviceData } from "../formatters";
 
+// IDEA: rename getDevices into listDevices?
+//TODO: return DB records by default and add option to add transformed data
 export const getDevices = async (_request: Request, response: Response) => {
   console.log("Fetching devices list...");
   let allDevices = [];
