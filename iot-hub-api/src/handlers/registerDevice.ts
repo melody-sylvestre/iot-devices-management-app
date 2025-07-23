@@ -15,7 +15,7 @@ export const registerDevice = async (request: Request, response: Response) => {
     const errorMessage =
       error instanceof Error
         ? error.message
-        : "An error occured while validating the details of the new device.";
+        : "An error occurred while validating the details of the new device.";
     response.status(400).json({ message: errorMessage, data: null });
     return;
   }

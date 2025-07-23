@@ -54,9 +54,6 @@ describe("registerDevice", () => {
     });
   });
 
-  // TODO: Write this test
-  test("It returns 400 status if there is already a record with the same name", async () => {});
-
   test("It returns 500 if the new record can't be created in the devices table", async () => {
     const newDevice = testDevices[0];
 
