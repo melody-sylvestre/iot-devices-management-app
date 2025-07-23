@@ -10,6 +10,11 @@ export const mapDeviceDataToDeviceModel = (deviceData: any): Device => {
     throw new Error(message);
   }
 
+  //TODO: maybe add a step like schema = DEVICE_VALIDATION_RULES[
+  //   deviceData.type as keyof typeof DEVICE_VALIDATION_RULES
+  // ] and rebuild a  stricter validation schema using z.stricObject and .shape?
+  //
+
   const validDeviceData =
     DEVICE_VALIDATION_RULES[
       deviceData.type as keyof typeof DEVICE_VALIDATION_RULES

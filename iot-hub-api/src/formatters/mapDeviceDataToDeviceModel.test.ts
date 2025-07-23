@@ -32,7 +32,10 @@ describe("mapDeviceDataToDeviceModel", () => {
   });
 
   test("If a required property is missing from the device request, it throws an error", () => {
-    const badDevice = { name: "badDevice", type: "Light Switch" };
+    const badDevice = {
+      name: "badDevice",
+      type: "Light Switch",
+    };
 
     expect(() => {
       mapDeviceDataToDeviceModel(badDevice);

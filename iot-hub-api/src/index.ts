@@ -7,6 +7,7 @@ app.use(express.json());
 
 // Routes
 app.get("/devices", getDevices);
+// FIXME: registerDevice should reject unknown keys
 app.post("/devices", registerDevice);
 app.delete("/devices/:id", deleteDevice);
 
