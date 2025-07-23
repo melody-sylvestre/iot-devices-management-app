@@ -1,10 +1,7 @@
 import type { Request, Response } from "express";
 import { prismaClient } from "../prisma/client";
 import { v4 } from "uuid";
-import {
-  mapDeviceDataToDeviceModel,
-  mapDeviceModelToDeviceData,
-} from "../formatters";
+import { mapDeviceDataToDeviceModel } from "../formatters";
 
 export const registerDevice = async (request: Request, response: Response) => {
   const data = request.body;
@@ -29,7 +26,7 @@ export const registerDevice = async (request: Request, response: Response) => {
     });
     response.status(201).json({
       message: "Successfully registered new device",
-      data: mapDeviceModelToDeviceData(registeredDevice),
+      data: registeredDevice,
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "";

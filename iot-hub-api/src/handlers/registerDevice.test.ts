@@ -32,7 +32,7 @@ describe("registerDevice", () => {
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({
       message: "Successfully registered new device",
-      data: newDevice,
+      data: mapDeviceDataToDeviceModel(newDevice),
     });
   });
 
