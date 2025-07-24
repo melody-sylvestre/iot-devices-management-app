@@ -43,4 +43,19 @@ describe("mapDeviceDataToDeviceModel", () => {
       "✖ Invalid input: expected boolean, received undefined\n  → at is_enabled\n✖ Invalid input: expected boolean, received undefined\n  → at is_on"
     );
   });
+
+  test("If a field not supported for that type of device, it throws an error", () => {
+    const badDevice = {
+      id: v4(),
+      name: "Kitchen Light",
+      type: "Light Switch",
+      is_enabled: true,
+      is_on: true,
+      current_value: 1,
+    };
+
+    expect(() => {
+      mapDeviceDataToDeviceModel(badDevice);
+    }).toThrow(new Error('✖ Unrecognized key: "current_value"'));
+  });
 });
