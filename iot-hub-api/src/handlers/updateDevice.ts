@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { prismaClient } from "../prisma/client";
-import { mapDeviceModelToDeviceData } from "../formatters";
-import { DEVICE_VALIDATION_RULES } from "../definitions/types";
+import { mapDeviceDataToDeviceModel } from "../formatters";
 
 export const updateDevice = async (request: Request, response: Response) => {
   const id = request.params.id;
@@ -18,29 +17,41 @@ export const updateDevice = async (request: Request, response: Response) => {
     });
     return;
   }
-  //FIXME: find how to validate update object
-  //FIXME: this will change depending on how I would parse dbRecord into device data
-  //FIXME: also if the dbrecord is not valid then I can't parse it???
-  let newRecord = { ...existingRecord, ...updateData };
 
-  if (!Object.keys(DEVICE_VALIDATION_RULES).includes(newRecord.type)) {
-    const message = `Error: ${newRecord.type} is not a supported device type.`;
-    response.status(500).json({
-      message: message,
+  let newRecord = { ...existingRecord, ...updateData };
+  let newValidatedRecord;
+
+  // TODO: maybe I'll have to rename mapDeviceDataToDeviceModel
+  try {
+    newValidatedRecord = mapDeviceDataToDeviceModel(newRecord);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "";
+    response.status(400).json({
+      message: `Invalid update request: ${errorMessage}`,
       data: null,
     });
     return;
   }
 
-  try {
-    DEVICE_VALIDATION_RULES[
-      newRecord.type as keyof typeof DEVICE_VALIDATION_RULES
-    ].parse(newRecord);
-  } catch {}
+  let updatedRecord;
 
-  //TODO:
-  // build update with existing record  as device data + update and parse following type
-  // -> if fail: return 400
-  // attempt  update
-  // return 200 or 500 following results
+  try {
+    updatedRecord = await prismaClient.device.update({
+      where: { id },
+      data: newValidatedRecord,
+    });
+    response.status(200).json({
+      message: `Successfully updated device ${updatedRecord.name} (id: ${id}).`,
+      data: updatedRecord,
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "";
+    response.status(500).json({
+      message: `Could not update device id ${id}. ${errorMessage}`,
+      data: null,
+    });
+    return;
+  }
+
+  return;
 };

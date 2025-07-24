@@ -18,14 +18,16 @@ export const thermostatSchema = deviceSchema
     current_value_1: z.number().nullable(),
     target_value_1: z.number().gte(5).lte(30).nullable(),
   })
-  .strict();
+  .strict()
+  .catchall(z.null());
 
 export const lightSwitchSchema = deviceSchema
   .extend({
     ...deviceSchema.shape,
     is_on: z.boolean(),
   })
-  .strict();
+  .strict()
+  .catchall(z.null());
 
 export const DEVICE_VALIDATION_RULES: Record<DeviceType, z.ZodSchema> = {
   Thermostat: thermostatSchema,

@@ -20,6 +20,6 @@ export const mapDeviceDataToDeviceModel = (deviceData: any): Device => {
     console.log(JSON.stringify(message));
     throw new Error(message);
   }
-  const deviceAsDeviceType = { ...defaultDevice, ...deviceData };
+  const deviceAsDeviceType = { ...defaultDevice, ...validDeviceData };
   return deviceAsDeviceType;
 };
