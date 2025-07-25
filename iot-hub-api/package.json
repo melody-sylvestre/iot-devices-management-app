@@ -4,7 +4,11 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "ts-node ./src/index.ts"
+    "unit-test": "jest -c ./jest.unit.config.ts",
+    "start": "ts-node ./src/index.ts",
+    "db:generate": "npx prisma generate",
+    "db:push": "npx prisma db push",
+    "db:docker": "docker-compose up -d && npm run db:push && npm run db:generate"
   },
   "prisma": {
     "schema": "./prisma/schema.prisma"
@@ -31,5 +35,8 @@
     "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
+  }, 
+  "engines": {
+    "node": "22"  
   }
 }
