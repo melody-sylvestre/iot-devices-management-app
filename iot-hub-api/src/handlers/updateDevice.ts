@@ -38,8 +38,8 @@ export const updateDevice = async (request: Request, response: Response) => {
 
   let newRecord = { ...existingRecord, ...updateData };
   let newValidatedRecord;
-
   console.log("Validating update");
+
   try {
     newValidatedRecord = validateAndMapNewDataToDeviceModel(newRecord);
   } catch (error) {

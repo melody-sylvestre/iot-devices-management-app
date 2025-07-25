@@ -12,6 +12,7 @@ jest.mock("../prisma/client");
 describe("updateDevice", () => {
   let res: Partial<Response>;
   beforeEach(() => {
+    jest.clearAllMocks();
     res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
@@ -38,6 +39,7 @@ describe("updateDevice", () => {
     jest
       .mocked(prismaClient.device.findUnique)
       .mockRejectedValue(new Error("Database error."));
+
     await updateDevice(req as Request, res as Response);
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
@@ -77,6 +79,7 @@ describe("updateDevice", () => {
       is_enabled: true,
       is_on: false,
     });
+
     const req = {
       body: {
         target_value_1: 18,
@@ -124,12 +127,14 @@ describe("updateDevice", () => {
     jest
       .mocked(prismaClient.device.findUnique)
       .mockResolvedValue(existingRecord);
+
     jest.mocked(prismaClient.device.update).mockRejectedValue(
       new Prisma.PrismaClientKnownRequestError("Duplicate name", {
         code: "P2002",
         clientVersion: "6.12.0",
       })
     );
+
     await updateDevice(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(400);
@@ -147,6 +152,7 @@ describe("updateDevice", () => {
       is_enabled: true,
       is_on: false,
     });
+
     const updateData = {
       name: "new name",
       is_on: true,
@@ -165,6 +171,7 @@ describe("updateDevice", () => {
     jest
       .mocked(prismaClient.device.findUnique)
       .mockResolvedValue(existingRecord);
+
     jest.mocked(prismaClient.device.update).mockResolvedValue(updatedRecord);
     await updateDevice(req as Request, res as Response);
 
@@ -180,6 +187,7 @@ describe("updateDevice", () => {
       ...validateAndMapNewDataToDeviceModel(testDevices[0]),
       id: v4(),
     };
+
     const updateData = {
       name: "new name",
     };

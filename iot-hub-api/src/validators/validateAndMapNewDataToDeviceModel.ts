@@ -20,10 +20,12 @@ export const validateAndMapNewDataToDeviceModel = (deviceData: any): Device => {
     throw new Error(message);
   }
 
+  //Actually, validData is always an object because it is the result of zod.safeParse, but Typescript needs an additional type check here.
   const validData =
     validDevice.data && typeof validDevice.data === "object"
       ? validDevice.data
       : {};
+
   const deviceAsDeviceType = { ...defaultDevice, ...validData };
   return deviceAsDeviceType;
 };
