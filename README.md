@@ -4,7 +4,7 @@ A Typescript API to manage IoT devices in a smart home
 
 ## Design
 
-I have designed this API around 3 core concepts: flexibility, maintainability, robustness, easy-to-use.
+I have designed this API around 3 core concepts: flexibility, maintainability and robustness.
 
 ### Flexibility
 
