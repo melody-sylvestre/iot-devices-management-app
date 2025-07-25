@@ -5,7 +5,7 @@ type DeviceType = "Thermostat" | "Light Switch";
 
 // NOTE: All devices validation schemas mut be defined  from requiredDevicePropertiesSchema and optionalDevicePropertiesSchema
 
-// This defines all the properties that are mandatory for any type of device
+// This variable defines all the properties that are mandatory for any type of device
 export const requiredDevicePropertiesSchema = z.object({
   id: z.uuid().optional(),
   name: z.string().trim().min(1).max(30),
@@ -13,7 +13,7 @@ export const requiredDevicePropertiesSchema = z.object({
   is_enabled: z.boolean(),
 });
 
-// This defines  the properties that can be nullable depending on the device type.
+// This variable defines the properties that can be nullable depending on the device type.
 export const optionalDevicePropertiesSchema = z.object({
   is_on: z.null().optional(),
   current_value_1: z.null().optional(),
@@ -35,7 +35,7 @@ export const lightSwitchSchema = z.strictObject({
   is_on: z.boolean().nullable(),
 });
 
-// NOTE: Any new device type MUST  be added to the variable below, in order to be supported by the API.
+// NOTE: Any new device type MUST be added to the variable below in order to be supported by the API.
 export const DEVICE_VALIDATION_RULES: Record<DeviceType, z.ZodSchema> = {
   Thermostat: thermostatSchema,
   "Light Switch": lightSwitchSchema,

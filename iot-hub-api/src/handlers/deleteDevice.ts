@@ -26,6 +26,7 @@ export const deleteDevice = async (request: Request, response: Response) => {
     ) {
       message = `Error: device with ID ${id} was not found in the database.`;
       console.log(message);
+
       response.status(404).json({
         message: message,
         data: null,
@@ -39,6 +40,7 @@ export const deleteDevice = async (request: Request, response: Response) => {
         : "An error occurred while deleting the device.";
     message = `Error: device with ID ${id} could not be deleted. ${errorMessage}`;
     console.log(message);
+
     response.status(500).json({
       message: message,
       data: null,

@@ -11,6 +11,7 @@ describe("deleteDevice", () => {
   let res: Partial<Response>;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
@@ -31,18 +32,15 @@ describe("deleteDevice", () => {
     });
   });
 
-  test("If the device was not deleted because it is not in the database, it returns a 404 status and JSON object wtith an error message.", async () => {
+  test("If the device was not deleted because it is not in the database, it returns a 404 status and a JSON object with an error message.", async () => {
     const deletedDevice = validateAndMapNewDataToDeviceModel(testDevices[0]);
     const req = { params: { id: deletedDevice.id } } as Partial<Request>;
 
     jest.mocked(prismaClient.device.delete).mockRejectedValue(
-      new Prisma.PrismaClientKnownRequestError(
-        "No record was found for a delete",
-        {
-          code: "P2025",
-          clientVersion: "6.12.0",
-        }
-      )
+      new Prisma.PrismaClientKnownRequestError("No record was found.", {
+        code: "P2025",
+        clientVersion: "6.12.0",
+      })
     );
     await deleteDevice(req as Request, res as Response);
 
