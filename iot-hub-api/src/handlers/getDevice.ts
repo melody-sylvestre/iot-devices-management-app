@@ -15,6 +15,7 @@ export const getDevice = async (request: Request, response: Response) => {
         message: `There is no device with id ${id} in the database.`,
         data: null,
       });
+      return;
     }
 
     response.status(200).json({
