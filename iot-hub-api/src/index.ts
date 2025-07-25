@@ -1,5 +1,10 @@
 import express from "express";
-import { deleteDevice, getDevices, registerDevice } from "./handlers";
+import {
+  deleteDevice,
+  getDevices,
+  registerDevice,
+  updateDevice,
+} from "./handlers";
 
 const app = express();
 
@@ -7,8 +12,8 @@ app.use(express.json());
 
 // Routes
 app.get("/devices", getDevices);
-// FIXME: registerDevice should reject unknown keys
 app.post("/devices", registerDevice);
+app.put("/devices/:id", updateDevice);
 app.delete("/devices/:id", deleteDevice);
 
 console.log("iot-hub API is ready");

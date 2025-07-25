@@ -6,6 +6,7 @@ export const updateDevice = async (request: Request, response: Response) => {
   const id = request.params.id;
   const updateData = request.body;
 
+  console.log("Fetching existing record");
   let existingRecord;
   try {
     existingRecord = await prismaClient.device.findUnique({ where: { id } });
@@ -22,6 +23,7 @@ export const updateDevice = async (request: Request, response: Response) => {
   let newValidatedRecord;
 
   // TODO: maybe I'll have to rename mapDeviceDataToDeviceModel
+  console.log("Validating update");
   try {
     newValidatedRecord = mapDeviceDataToDeviceModel(newRecord);
   } catch (error) {
@@ -34,7 +36,7 @@ export const updateDevice = async (request: Request, response: Response) => {
   }
 
   let updatedRecord;
-
+  console.log("Atte,ting update");
   try {
     updatedRecord = await prismaClient.device.update({
       where: { id },
@@ -46,6 +48,8 @@ export const updateDevice = async (request: Request, response: Response) => {
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "";
+    console.log(errorMessage);
+
     response.status(500).json({
       message: `Could not update device id ${id}. ${errorMessage}`,
       data: null,

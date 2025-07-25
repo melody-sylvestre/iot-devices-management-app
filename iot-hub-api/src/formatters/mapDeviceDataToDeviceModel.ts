@@ -10,16 +10,21 @@ export const mapDeviceDataToDeviceModel = (deviceData: any): Device => {
     throw new Error(message);
   }
 
-  const validDeviceData =
+  const validDevice =
     DEVICE_VALIDATION_RULES[
       deviceData.type as keyof typeof DEVICE_VALIDATION_RULES
     ].safeParse(deviceData);
 
-  if (!validDeviceData.success) {
-    const message = z.prettifyError(validDeviceData.error);
+  if (!validDevice.success) {
+    const message = z.prettifyError(validDevice.error);
     console.log(JSON.stringify(message));
     throw new Error(message);
   }
-  const deviceAsDeviceType = { ...defaultDevice, ...validDeviceData };
+
+  const validData =
+    validDevice.data && typeof validDevice.data === "object"
+      ? validDevice.data
+      : {};
+  const deviceAsDeviceType = { ...defaultDevice, ...validData };
   return deviceAsDeviceType;
 };

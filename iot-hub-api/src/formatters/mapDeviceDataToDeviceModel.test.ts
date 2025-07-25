@@ -56,6 +56,10 @@ describe("mapDeviceDataToDeviceModel", () => {
 
     expect(() => {
       mapDeviceDataToDeviceModel(badDevice);
-    }).toThrow(new Error('✖ Unrecognized key: "current_value"'));
+    }).toThrow(
+      new Error(
+        "✖ Invalid input: expected null, received number\n  → at current_value"
+      )
+    );
   });
 });
