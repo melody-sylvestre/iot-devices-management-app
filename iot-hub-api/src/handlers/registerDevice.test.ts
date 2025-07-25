@@ -11,6 +11,7 @@ describe("registerDevice", () => {
   let res: Partial<Response>;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
@@ -18,22 +19,21 @@ describe("registerDevice", () => {
   });
 
   test("It returns a 201 status and the new record in the JSON response if the request is valid", async () => {
-    const newDevice = testDevices[0];
+    const newDeviceData = testDevices[0];
+    const createdDbRecord = validateAndMapNewDataToDeviceModel(newDeviceData);
 
     const req = {
-      body: newDevice,
+      body: newDeviceData,
     };
 
-    jest
-      .mocked(prismaClient.device.create)
-      .mockResolvedValue(validateAndMapNewDataToDeviceModel(newDevice));
+    jest.mocked(prismaClient.device.create).mockResolvedValue(createdDbRecord);
 
     await registerDevice(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({
       message: "Successfully registered new device",
-      data: validateAndMapNewDataToDeviceModel(newDevice),
+      data: createdDbRecord,
     });
   });
 

@@ -18,6 +18,7 @@ export const registerDevice = async (request: Request, response: Response) => {
         ? error.message
         : "An error occurred while validating the details of the new device.";
     console.log(errorMessage);
+
     response.status(400).json({ message: errorMessage, data: null });
     return;
   }
@@ -32,8 +33,10 @@ export const registerDevice = async (request: Request, response: Response) => {
     registeredDevice = await prismaClient.device.create({
       data: { ...newDevice },
     });
+
     message = "Successfully registered new device";
     console.log(message);
+
     response.status(201).json({
       message: message,
       data: registeredDevice,
@@ -46,6 +49,7 @@ export const registerDevice = async (request: Request, response: Response) => {
     ) {
       message = `Error: the name ${newDevice.name} is already present in the database and cannot be duplicated.`;
       console.log(message);
+
       response.status(400).json({
         message: message,
         data: null,
@@ -56,6 +60,7 @@ export const registerDevice = async (request: Request, response: Response) => {
     const errorMessage = error instanceof Error ? error.message : "";
     message = `Error: impossible to register the new device. ${errorMessage}`;
     console.log(message);
+
     response.status(500).json({
       message: message,
       data: null,
