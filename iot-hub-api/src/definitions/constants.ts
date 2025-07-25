@@ -1,5 +1,6 @@
 import type { Device } from "@prisma/client";
 
+// NOTE: add new fields here if required.
 export const defaultDevice: Device = {
   id: "",
   name: "",
