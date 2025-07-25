@@ -1,7 +1,7 @@
 import { registerDevice } from "./registerDevice";
 import type { Request, Response } from "express";
 import { prismaClient } from "../prisma/client";
-import { mapDeviceDataToDeviceModel } from "../formatters";
+import { validateAndMapNewDataToDeviceModel } from "../validators";
 import { testDevices } from "../testUtils/devices";
 
 jest.mock("../prisma/client");
@@ -25,14 +25,14 @@ describe("registerDevice", () => {
 
     jest
       .mocked(prismaClient.device.create)
-      .mockResolvedValue(mapDeviceDataToDeviceModel(newDevice));
+      .mockResolvedValue(validateAndMapNewDataToDeviceModel(newDevice));
 
     await registerDevice(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({
       message: "Successfully registered new device",
-      data: mapDeviceDataToDeviceModel(newDevice),
+      data: validateAndMapNewDataToDeviceModel(newDevice),
     });
   });
 

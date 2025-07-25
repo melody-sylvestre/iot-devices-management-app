@@ -4,7 +4,7 @@ import { DEVICE_VALIDATION_RULES } from "../definitions/types";
 
 import * as z from "zod";
 
-export const mapDeviceDataToDeviceModel = (deviceData: any): Device => {
+export const validateAndMapNewDataToDeviceModel = (deviceData: any): Device => {
   if (!Object.keys(DEVICE_VALIDATION_RULES).includes(deviceData?.type)) {
     const message = `Error: ${deviceData?.type} is not a supported device type.`;
     throw new Error(message);

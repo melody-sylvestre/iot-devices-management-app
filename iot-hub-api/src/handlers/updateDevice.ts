@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { prismaClient } from "../prisma/client";
-import { mapDeviceDataToDeviceModel } from "../formatters";
+import { validateAndMapNewDataToDeviceModel } from "../validators";
 
 export const updateDevice = async (request: Request, response: Response) => {
   const id = request.params.id;
@@ -31,10 +31,9 @@ export const updateDevice = async (request: Request, response: Response) => {
   let newRecord = { ...existingRecord, ...updateData };
   let newValidatedRecord;
 
-  // TODO: maybe I'll have to rename mapDeviceDataToDeviceModel
   console.log("Validating update");
   try {
-    newValidatedRecord = mapDeviceDataToDeviceModel(newRecord);
+    newValidatedRecord = validateAndMapNewDataToDeviceModel(newRecord);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "";
     response.status(400).json({

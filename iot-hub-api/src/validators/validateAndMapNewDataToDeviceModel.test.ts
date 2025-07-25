@@ -1,10 +1,10 @@
 import type { Device } from "@prisma/client";
 import { defaultDevice } from "../definitions/constants";
-import { mapDeviceDataToDeviceModel } from "./mapDeviceDataToDeviceModel";
+import { validateAndMapNewDataToDeviceModel } from "./validateAndMapNewDataToDeviceModel";
 
 import { v4 } from "uuid";
 
-describe("mapDeviceDataToDeviceModel", () => {
+describe("validateAndMapNewDataToDeviceModel", () => {
   test("When provided with an object representing a device data, it returns an object of Device type, with the missing properties set to null or empty strings", () => {
     const testDevice = {
       id: v4(),
@@ -18,7 +18,7 @@ describe("mapDeviceDataToDeviceModel", () => {
       ...testDevice,
     };
 
-    expect(mapDeviceDataToDeviceModel(testDevice)).toStrictEqual(
+    expect(validateAndMapNewDataToDeviceModel(testDevice)).toStrictEqual(
       testDeviceAsDeviceModel
     );
   });
@@ -27,7 +27,7 @@ describe("mapDeviceDataToDeviceModel", () => {
     const badDevice = { name: "Weird Device", type: "UFO" };
 
     expect(() => {
-      mapDeviceDataToDeviceModel(badDevice);
+      validateAndMapNewDataToDeviceModel(badDevice);
     }).toThrow(`Error: UFO is not a supported device type.`);
   });
 
@@ -38,7 +38,7 @@ describe("mapDeviceDataToDeviceModel", () => {
     };
 
     expect(() => {
-      mapDeviceDataToDeviceModel(badDevice);
+      validateAndMapNewDataToDeviceModel(badDevice);
     }).toThrow(
       "✖ Invalid input: expected boolean, received undefined\n  → at is_enabled\n✖ Invalid input: expected boolean, received undefined\n  → at is_on"
     );
@@ -55,7 +55,7 @@ describe("mapDeviceDataToDeviceModel", () => {
     };
 
     expect(() => {
-      mapDeviceDataToDeviceModel(badDevice);
+      validateAndMapNewDataToDeviceModel(badDevice);
     }).toThrow(
       new Error(
         "✖ Invalid input: expected null, received number\n  → at current_value"

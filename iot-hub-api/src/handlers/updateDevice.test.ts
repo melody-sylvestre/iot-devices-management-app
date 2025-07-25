@@ -1,7 +1,7 @@
 import { Response, Request } from "express";
 import { updateDevice } from "./updateDevice";
 import { prismaClient } from "../prisma/client";
-import { mapDeviceDataToDeviceModel } from "../formatters";
+import { validateAndMapNewDataToDeviceModel } from "../validators";
 import { v4 } from "uuid";
 import { testDevices } from "../testUtils/devices";
 import { defaultDevice } from "../definitions/constants";
@@ -68,7 +68,7 @@ describe("updateDevice", () => {
   });
 
   test("If the update data is invalid (e.g trying to updated a target temperature for a light switch), it returns a 400 status and a JSON object containing an error message.", async () => {
-    const existingRecord = mapDeviceDataToDeviceModel({
+    const existingRecord = validateAndMapNewDataToDeviceModel({
       id: v4(),
       name: "Kitchen Light",
       type: "Light Switch",
@@ -96,7 +96,7 @@ describe("updateDevice", () => {
   });
 
   test("If the update is successful, it returns a 200 status and a JSON object containing a success message and the update database record", async () => {
-    const existingRecord = mapDeviceDataToDeviceModel({
+    const existingRecord = validateAndMapNewDataToDeviceModel({
       id: v4(),
       name: "Kitchen Light",
       type: "Light Switch",
@@ -132,7 +132,7 @@ describe("updateDevice", () => {
   });
 
   test("If the update is unsuccessful because of a database error, it returns a 500 status and a JSON object containing an error message", async () => {
-    const existingRecord = mapDeviceDataToDeviceModel(testDevices[0]);
+    const existingRecord = validateAndMapNewDataToDeviceModel(testDevices[0]);
     const updateData = {
       name: "new name",
     };

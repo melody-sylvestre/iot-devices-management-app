@@ -1,4 +1,4 @@
-import { mapDeviceDataToDeviceModel } from "../formatters";
+import { validateAndMapNewDataToDeviceModel } from "../validators";
 import { prismaClient } from "../prisma/client";
 import { testDevices } from "../testUtils/devices";
 import { deleteDevice } from "./deleteDevice";
@@ -17,7 +17,7 @@ describe("deleteDevice", () => {
   });
 
   test("If the device was deleted successfully, it returns a 200 status and a JSON object with a message confirming its deletion.", async () => {
-    const deletedDevice = mapDeviceDataToDeviceModel(testDevices[0]);
+    const deletedDevice = validateAndMapNewDataToDeviceModel(testDevices[0]);
     const req = { params: { id: deletedDevice.id } } as Partial<Request>;
 
     jest.mocked(prismaClient.device.delete).mockResolvedValue(deletedDevice);
@@ -30,7 +30,7 @@ describe("deleteDevice", () => {
     });
   });
   test("If the device was not deleted, it returns a 500 status and JSON object wtith an error message.", async () => {
-    const deletedDevice = mapDeviceDataToDeviceModel(testDevices[0]);
+    const deletedDevice = validateAndMapNewDataToDeviceModel(testDevices[0]);
     const req = { params: { id: deletedDevice.id } } as Partial<Request>;
 
     jest

@@ -1,4 +1,5 @@
 import express from "express";
+import dotenv from "dotenv";
 import {
   deleteDevice,
   getDevice,
@@ -8,8 +9,10 @@ import {
 } from "./handlers";
 
 const app = express();
-
 app.use(express.json());
+
+dotenv.config();
+const port = process.env.PORT || 3000;
 
 // Routes
 app.get("/devices", listDevices);
@@ -18,7 +21,6 @@ app.get("/devices/:id", getDevice);
 app.put("/devices/:id", updateDevice);
 app.delete("/devices/:id", deleteDevice);
 
-console.log("iot-hub API is ready");
+console.log(`iot-hub API is ready and listening on port ${port}`);
 
-// IDEA: add port in config file?
-app.listen(3000);
+app.listen(port);

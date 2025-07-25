@@ -1,0 +1,1 @@
+export { validateAndMapNewDataToDeviceModel } from "./validateAndMapNewDataToDeviceModel";

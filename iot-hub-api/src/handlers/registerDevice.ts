@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { prismaClient } from "../prisma/client";
 import { v4 } from "uuid";
-import { mapDeviceDataToDeviceModel } from "../formatters";
+import { validateAndMapNewDataToDeviceModel } from "../validators";
 
 export const registerDevice = async (request: Request, response: Response) => {
   console.log("Parsing new device details...");
@@ -10,7 +10,7 @@ export const registerDevice = async (request: Request, response: Response) => {
   let newDevice;
 
   try {
-    newDevice = mapDeviceDataToDeviceModel(data);
+    newDevice = validateAndMapNewDataToDeviceModel(data);
   } catch (error) {
     const errorMessage =
       error instanceof Error

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { listDevices } from "./listDevices";
 import { testDevices } from "../testUtils/devices";
 import { prismaClient } from "../prisma/client";
-import { mapDeviceDataToDeviceModel } from "../formatters/mapDeviceDataToDeviceModel";
+import { validateAndMapNewDataToDeviceModel } from "../validators";
 jest.mock("../prisma/client.ts");
 
 describe("getDevices", () => {
@@ -18,7 +18,7 @@ describe("getDevices", () => {
   test("If there are devices records in the database and they are all valid, it returns them as a list with a 200 status.", async () => {
     const req = {} as any as Request;
     const testDevicesAsDbRecords = testDevices.map((device) => {
-      return mapDeviceDataToDeviceModel(device);
+      return validateAndMapNewDataToDeviceModel(device);
     });
     jest
       .mocked(prismaClient.device.findMany)
