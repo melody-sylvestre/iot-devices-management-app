@@ -176,7 +176,10 @@ describe("updateDevice", () => {
   });
 
   test("If the update is unsuccessful because of a database error, it returns a 500 status and a JSON object containing an error message", async () => {
-    const existingRecord = validateAndMapNewDataToDeviceModel(testDevices[0]);
+    const existingRecord = {
+      ...validateAndMapNewDataToDeviceModel(testDevices[0]),
+      id: v4(),
+    };
     const updateData = {
       name: "new name",
     };

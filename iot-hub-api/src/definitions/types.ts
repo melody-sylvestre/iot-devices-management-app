@@ -3,7 +3,7 @@ import * as z from "zod";
 const DEVICE_TYPES = ["Thermostat", "Light Switch"] as const;
 type DeviceType = "Thermostat" | "Light Switch";
 
-// NOTE: All devices validation schemas mut be defined  from requiredDevicePropertiesSchema and optionalDevicePropertiesSchema
+// NOTE: All devices validation schemas mut be defined from requiredDevicePropertiesSchema and optionalDevicePropertiesSchema
 
 // This variable defines all the properties that are mandatory for any type of device
 export const requiredDevicePropertiesSchema = z.object({
