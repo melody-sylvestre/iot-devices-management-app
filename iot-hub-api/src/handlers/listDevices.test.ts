@@ -3,23 +3,27 @@ import { listDevices } from "./listDevices";
 import { testDevices } from "../testUtils/devices";
 import { prismaClient } from "../prisma/client";
 import { validateAndMapNewDataToDeviceModel } from "../validators";
+import { v4 } from "uuid";
+
 jest.mock("../prisma/client.ts");
 
 describe("getDevices", () => {
   let res: Partial<Response>;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
     };
   });
 
-  test("If there are devices records in the database and they are all valid, it returns them as a list with a 200 status.", async () => {
+  test("If there are device records in the database, it returns them as a list with a 200 status.", async () => {
     const req = {} as any as Request;
     const testDevicesAsDbRecords = testDevices.map((device) => {
-      return validateAndMapNewDataToDeviceModel(device);
+      return { ...validateAndMapNewDataToDeviceModel(device), id: v4() };
     });
+
     jest
       .mocked(prismaClient.device.findMany)
       .mockResolvedValue(testDevicesAsDbRecords);
@@ -33,7 +37,7 @@ describe("getDevices", () => {
     });
   });
 
-  test("If there are no device record in the database, it returns an empty list with a 200 status.", async () => {
+  test("If there is no device record in the database, it returns an empty list with a 200 status.", async () => {
     const req = {} as any as Request;
     jest.mocked(prismaClient.device.findMany).mockResolvedValue([]);
 
