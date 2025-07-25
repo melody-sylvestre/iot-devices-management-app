@@ -51,14 +51,14 @@ describe("validateAndMapNewDataToDeviceModel", () => {
       type: "Light Switch",
       is_enabled: true,
       is_on: true,
-      current_value: 1,
+      current_value_1: 1,
     };
 
     expect(() => {
       validateAndMapNewDataToDeviceModel(badDevice);
     }).toThrow(
       new Error(
-        "✖ Invalid input: expected null, received number\n  → at current_value"
+        "✖ Invalid input: expected null, received number\n  → at current_value_1"
       )
     );
   });

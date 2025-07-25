@@ -69,7 +69,7 @@ describe("updateDevice", () => {
     });
   });
 
-  test("If the update data is invalid (e.g trying to updated a target temperature for a light switch), it returns a 400 status and a JSON object containing an error message.", async () => {
+  test("If the update data is invalid (e.g trying to update a target temperature for a light switch), it returns a 400 status and a JSON object containing an error message.", async () => {
     const existingRecord = validateAndMapNewDataToDeviceModel({
       id: v4(),
       name: "Kitchen Light",
