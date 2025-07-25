@@ -5,13 +5,17 @@ import { Prisma } from "@prisma/client";
 export const deleteDevice = async (request: Request, response: Response) => {
   const id = request.params.id;
   let deletedDevice;
+  let message;
 
   console.log(`Attempting device id ${id} deletion.`);
 
   try {
     deletedDevice = await prismaClient.device.delete({ where: { id } });
+    message = `${deletedDevice.name} was successfully deleted`;
+    console.log(message);
+
     response.status(200).json({
-      message: `${deletedDevice.name} was successfully deleted`,
+      message: message,
       data: null,
     });
   } catch (error) {
@@ -20,8 +24,10 @@ export const deleteDevice = async (request: Request, response: Response) => {
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === "P2025"
     ) {
+      message = `Error: device with ID ${id} was not found in the database.`;
+      console.log(message);
       response.status(404).json({
-        message: `Error: device with ID ${id} was not found in the database.`,
+        message: message,
         data: null,
       });
       return;
@@ -31,9 +37,10 @@ export const deleteDevice = async (request: Request, response: Response) => {
       error instanceof Error
         ? error.message
         : "An error occurred while deleting the device.";
-
+    message = `Error: device with ID ${id} could not be deleted. ${errorMessage}`;
+    console.log(message);
     response.status(500).json({
-      message: `Error: device with ID ${id} could not be deleted. ${errorMessage}`,
+      message: message,
       data: null,
     });
   }

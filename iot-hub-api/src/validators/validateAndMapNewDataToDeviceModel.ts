@@ -17,7 +17,6 @@ export const validateAndMapNewDataToDeviceModel = (deviceData: any): Device => {
 
   if (!validDevice.success) {
     const message = z.prettifyError(validDevice.error);
-    console.log(JSON.stringify(message));
     throw new Error(message);
   }
 

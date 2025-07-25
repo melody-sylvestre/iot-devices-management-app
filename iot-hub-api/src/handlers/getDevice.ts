@@ -4,6 +4,7 @@ import { prismaClient } from "../prisma/client";
 export const getDevice = async (request: Request, response: Response) => {
   const id = request.params.id;
   let device;
+  let message;
 
   console.log(`Fetching device id ${id}`);
 
@@ -11,15 +12,22 @@ export const getDevice = async (request: Request, response: Response) => {
     device = await prismaClient.device.findUnique({ where: { id } });
 
     if (!device) {
+      message = `Error: there is no device with id ${id} in the database.`;
+      console.log(message);
+
       response.status(404).json({
-        message: `Error: there is no device with id ${id} in the database.`,
+        message: message,
         data: null,
       });
+
       return;
     }
 
+    message = `Successfully fetched ${device?.name}.`;
+    console.log(message);
+
     response.status(200).json({
-      message: `Successfully fetched ${device?.name}.`,
+      message: message,
       data: device,
     });
   } catch (error) {
@@ -28,8 +36,11 @@ export const getDevice = async (request: Request, response: Response) => {
         ? error.message
         : "An error occurred while fetching the device.";
 
+    message = `Error: device with ID ${id} could not be fetched. ${errorMessage}`;
+    console.log(message);
+
     response.status(500).json({
-      message: `Error: device with ID ${id} could not be fetched. ${errorMessage}`,
+      message: message,
       data: null,
     });
   }

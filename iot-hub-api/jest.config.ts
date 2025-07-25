@@ -1,12 +1,8 @@
 import type { Config } from "jest";
+import { createDefaultPreset } from "ts-jest";
 
-export default (): Config => {
-  return {
-    verbose: true,
-    preset: "ts-jest",
-    transform: {
-      "^.+\\.(ts|tsx)?$": "ts-jest",
-    },
-    resetMocks: true,
-  };
+const config: Config = {
+  ...createDefaultPreset(),
 };
+
+export default config;
