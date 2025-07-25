@@ -1,50 +1,19 @@
 import type { Request, Response } from "express";
 import { prismaClient } from "../prisma/client";
-import { mapDeviceModelToDeviceData } from "../formatters";
 
-// IDEA: rename getDevices into listDevices?
-//TODO: return DB records by default and add option to add transformed data
-// FIXME: the mapDeviceModelToDeviceData does not do anything at the moment.... Remove or fix
 export const listDevices = async (_request: Request, response: Response) => {
   console.log("Fetching devices list...");
   let allDevices = [];
   let message = "";
-  let statusCode = 200;
 
   try {
     allDevices = await prismaClient.device.findMany();
     message = `Found ${allDevices.length} devices.`;
     console.log(message);
 
-    let formattingErrors = "";
-    let allDevicesFormattedData = [];
-
-    for (const device of allDevices) {
-      let data;
-
-      try {
-        data = mapDeviceModelToDeviceData(device);
-      } catch (e) {
-        //NOTE: this will trigger if some database records become nconsistent with the validation schema
-        let errorMessage =
-          e instanceof Error ? e.message : "met an error while formatting data";
-        formattingErrors += `${device.id}: ${errorMessage} `;
-        continue;
-      }
-      allDevicesFormattedData.push(data);
-    }
-
-    if (formattingErrors) {
-      console.log(formattingErrors);
-      message = `Found ${allDevicesFormattedData.length} valid devices and ${
-        allDevices.length - allDevicesFormattedData.length
-      } invalid records. ${formattingErrors}`;
-      statusCode = 500;
-    }
-
-    response.status(statusCode).json({
+    response.status(200).json({
       message: message,
-      data: allDevicesFormattedData,
+      data: allDevices,
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "";

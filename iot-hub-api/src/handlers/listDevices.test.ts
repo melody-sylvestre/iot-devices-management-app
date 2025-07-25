@@ -3,9 +3,6 @@ import { listDevices } from "./listDevices";
 import { testDevices } from "../testUtils/devices";
 import { prismaClient } from "../prisma/client";
 import { mapDeviceDataToDeviceModel } from "../formatters/mapDeviceDataToDeviceModel";
-import { mapDeviceModelToDeviceData } from "../formatters";
-import { v4 } from "uuid";
-
 jest.mock("../prisma/client.ts");
 
 describe("getDevices", () => {
@@ -31,12 +28,12 @@ describe("getDevices", () => {
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
-      message: `Found ${testDevices.length} devices.`,
-      data: testDevices,
+      message: `Found ${testDevicesAsDbRecords.length} devices.`,
+      data: testDevicesAsDbRecords,
     });
   });
 
-  test("If there are no devices record in the database, it returns an empty list with a 200 status.", async () => {
+  test("If there are no device record in the database, it returns an empty list with a 200 status.", async () => {
     const req = {} as any as Request;
     jest.mocked(prismaClient.device.findMany).mockResolvedValue([]);
 
@@ -61,28 +58,6 @@ describe("getDevices", () => {
     expect(res.json).toHaveBeenCalledWith({
       message: "Error: could not retrieve list of devices. Error message!",
       data: null,
-    });
-  });
-
-  test("If some records are inconsistent with the validation rules, it returns the valid records, a 500 status and an error message with the id of the invalid records", async () => {
-    const validDbRecord = mapDeviceDataToDeviceModel(testDevices[0]);
-    const id = v4();
-    const invalidDbRecord = {
-      ...mapDeviceDataToDeviceModel(testDevices[1]),
-      type: "Obsolete device",
-      id: id,
-    };
-    const dbRecords = [validDbRecord, invalidDbRecord];
-
-    const req = {} as any as Request;
-    jest.mocked(prismaClient.device.findMany).mockResolvedValue(dbRecords);
-
-    await listDevices(req, res as Response);
-
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({
-      message: `Found 1 valid devices and 1 invalid records. ${id}: Error: Obsolete device is not a supported device type. `,
-      data: [mapDeviceModelToDeviceData(validDbRecord)],
     });
   });
 });
