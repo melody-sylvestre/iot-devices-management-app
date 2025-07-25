@@ -1,7 +1,8 @@
 import express from "express";
 import {
   deleteDevice,
-  getDevices,
+  getDevice,
+  listDevices,
   registerDevice,
   updateDevice,
 } from "./handlers";
@@ -11,8 +12,9 @@ const app = express();
 app.use(express.json());
 
 // Routes
-app.get("/devices", getDevices);
+app.get("/devices", listDevices);
 app.post("/devices", registerDevice);
+app.get("/devices/:id", getDevice);
 app.put("/devices/:id", updateDevice);
 app.delete("/devices/:id", deleteDevice);
 

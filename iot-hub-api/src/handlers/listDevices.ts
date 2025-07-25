@@ -5,7 +5,7 @@ import { mapDeviceModelToDeviceData } from "../formatters";
 // IDEA: rename getDevices into listDevices?
 //TODO: return DB records by default and add option to add transformed data
 // FIXME: the mapDeviceModelToDeviceData does not do anything at the moment.... Remove or fix
-export const getDevices = async (_request: Request, response: Response) => {
+export const listDevices = async (_request: Request, response: Response) => {
   console.log("Fetching devices list...");
   let allDevices = [];
   let message = "";

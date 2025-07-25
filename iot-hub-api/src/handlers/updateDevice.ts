@@ -8,8 +8,17 @@ export const updateDevice = async (request: Request, response: Response) => {
 
   console.log("Fetching existing record");
   let existingRecord;
+
   try {
     existingRecord = await prismaClient.device.findUnique({ where: { id } });
+
+    if (!existingRecord) {
+      response.status(404).json({
+        message: `There is no device with id ${id} in the database.`,
+        data: null,
+      });
+      return;
+    }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "";
     response.status(500).json({
@@ -36,14 +45,14 @@ export const updateDevice = async (request: Request, response: Response) => {
   }
 
   let updatedRecord;
-  console.log("Atte,ting update");
+  console.log("Attempting update");
   try {
     updatedRecord = await prismaClient.device.update({
       where: { id },
       data: newValidatedRecord,
     });
     response.status(200).json({
-      message: `Successfully updated device ${updatedRecord.name} (id: ${id}).`,
+      message: `Successfully updated device ${updatedRecord.name} (id ${id}).`,
       data: updatedRecord,
     });
   } catch (error) {
@@ -51,7 +60,7 @@ export const updateDevice = async (request: Request, response: Response) => {
     console.log(errorMessage);
 
     response.status(500).json({
-      message: `Could not update device id ${id}. ${errorMessage}`,
+      message: `Could not update device ${existingRecord.name} (id ${id}). ${errorMessage}`,
       data: null,
     });
     return;

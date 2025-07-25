@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getDevices } from "./getDevices";
+import { listDevices } from "./listDevices";
 import { testDevices } from "../testUtils/devices";
 import { prismaClient } from "../prisma/client";
 import { mapDeviceDataToDeviceModel } from "../formatters/mapDeviceDataToDeviceModel";
@@ -27,7 +27,7 @@ describe("getDevices", () => {
       .mocked(prismaClient.device.findMany)
       .mockResolvedValue(testDevicesAsDbRecords);
 
-    await getDevices(req, res as Response);
+    await listDevices(req, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
@@ -40,7 +40,7 @@ describe("getDevices", () => {
     const req = {} as any as Request;
     jest.mocked(prismaClient.device.findMany).mockResolvedValue([]);
 
-    await getDevices(req, res as Response);
+    await listDevices(req, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
@@ -55,7 +55,7 @@ describe("getDevices", () => {
       .mocked(prismaClient.device.findMany)
       .mockRejectedValue(new Error("Error message!"));
 
-    await getDevices(req, res as Response);
+    await listDevices(req, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
@@ -77,7 +77,7 @@ describe("getDevices", () => {
     const req = {} as any as Request;
     jest.mocked(prismaClient.device.findMany).mockResolvedValue(dbRecords);
 
-    await getDevices(req, res as Response);
+    await listDevices(req, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({

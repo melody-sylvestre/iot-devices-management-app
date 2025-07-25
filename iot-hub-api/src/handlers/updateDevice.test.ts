@@ -4,6 +4,7 @@ import { prismaClient } from "../prisma/client";
 import { mapDeviceDataToDeviceModel } from "../formatters";
 import { v4 } from "uuid";
 import { testDevices } from "../testUtils/devices";
+import { defaultDevice } from "../definitions/constants";
 jest.mock("../prisma/client");
 
 describe("updateDevice", () => {
@@ -15,19 +16,53 @@ describe("updateDevice", () => {
     };
   });
 
-  //TODO: add a test for if the update fails because it is not possible to fetch the initial record.
+  test("If the database record does not exist, it returns a status 404 and a JSON object with an error message", async () => {
+    const id = v4();
+    const req = { params: { id } } as Partial<Request>;
+
+    jest.mocked(prismaClient.device.findUnique).mockResolvedValue(null);
+    await updateDevice(req as Request, res as Response);
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      message: `There is no device with id ${id} in the database.`,
+      data: null,
+    });
+  });
+
+  test("If it is not possible to fetch the existing record from the database for another reason, it returns a status 500 and a JSON object with an error message", async () => {
+    const id = v4();
+    const req = { params: { id } } as Partial<Request>;
+
+    jest
+      .mocked(prismaClient.device.findUnique)
+      .mockRejectedValue(new Error("Database error."));
+    await updateDevice(req as Request, res as Response);
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({
+      message: `Impossible to fetch device id ${id} from database. Database error.`,
+      data: null,
+    });
+  });
 
   test("If the data for the update cannot be parsed because of an invalid type, it returns a 400 status and a JSON object containing an error message.", async () => {
+    const id = v4();
+    const existingRecord = { ...defaultDevice, ...testDevices[0], id: id };
     const req = {
       body: {
         type: "random",
       },
-    };
+      params: { id },
+    } as Partial<Request>;
+
+    jest
+      .mocked(prismaClient.device.findUnique)
+      .mockResolvedValue(existingRecord);
 
     await updateDevice(req as Request, res as Response);
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
-      message: "Error: random is not a supported device type.",
+      message:
+        "Invalid update request: Error: random is not a supported device type.",
       data: null,
     });
   });
@@ -42,15 +77,20 @@ describe("updateDevice", () => {
     });
     const req = {
       body: {
-        target_value: 18,
+        target_value_1: 18,
       },
-    };
+      params: { id: existingRecord.id },
+    } as Partial<Request>;
 
-    //TODO: add mock to getDevice here!
+    jest
+      .mocked(prismaClient.device.findUnique)
+      .mockResolvedValue(existingRecord);
+
     await updateDevice(req as Request, res as Response);
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
-      message: `Error: invalid update for this type of device (${existingRecord.type})`,
+      message:
+        "Invalid update request: ✖ Invalid input: expected null, received number\n  → at target_value_1",
       data: null,
     });
   });
@@ -73,14 +113,20 @@ describe("updateDevice", () => {
       ...updateData,
     };
 
-    const req = { body: updateData };
+    const req = {
+      body: updateData,
+      params: { id: existingRecord.id },
+    } as Partial<Request>;
 
+    jest
+      .mocked(prismaClient.device.findUnique)
+      .mockResolvedValue(existingRecord);
     jest.mocked(prismaClient.device.update).mockResolvedValue(updatedRecord);
     await updateDevice(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
-      message: `Successfully updated device ${updatedRecord.name} (id ${updatedRecord.id})`,
+      message: `Successfully updated device ${updatedRecord.name} (id ${updatedRecord.id}).`,
       data: updatedRecord,
     });
   });
@@ -91,7 +137,14 @@ describe("updateDevice", () => {
       name: "new name",
     };
 
-    const req = { body: updateData };
+    const req = {
+      body: updateData,
+      params: { id: existingRecord.id },
+    } as Partial<Request>;
+
+    jest
+      .mocked(prismaClient.device.findUnique)
+      .mockResolvedValue(existingRecord);
 
     jest
       .mocked(prismaClient.device.update)
