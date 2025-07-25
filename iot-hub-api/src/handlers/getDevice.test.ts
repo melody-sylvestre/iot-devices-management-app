@@ -38,7 +38,7 @@ describe("getDevice", () => {
     await getDevice(req as Request, res as Response);
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({
-      message: `There is no device with id ${id} in the database.`,
+      message: `Error: there is no device with id ${id} in the database.`,
       data: null,
     });
   });
@@ -53,7 +53,7 @@ describe("getDevice", () => {
     await getDevice(req as Request, res as Response);
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
-      message: `Device with ID ${id} could not be fetched. Database error.`,
+      message: `Error: device with ID ${id} could not be fetched. Database error.`,
       data: null,
     });
   });

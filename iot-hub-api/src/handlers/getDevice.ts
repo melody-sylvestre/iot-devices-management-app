@@ -12,7 +12,7 @@ export const getDevice = async (request: Request, response: Response) => {
 
     if (!device) {
       response.status(404).json({
-        message: `There is no device with id ${id} in the database.`,
+        message: `Error: there is no device with id ${id} in the database.`,
         data: null,
       });
       return;
@@ -29,7 +29,7 @@ export const getDevice = async (request: Request, response: Response) => {
         : "An error occurred while fetching the device.";
 
     response.status(500).json({
-      message: `Device with ID ${id} could not be fetched. ${errorMessage}`,
+      message: `Error: device with ID ${id} could not be fetched. ${errorMessage}`,
       data: null,
     });
   }

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { prismaClient } from "../prisma/client";
 import { validateAndMapNewDataToDeviceModel } from "../validators";
+import { Prisma } from "@prisma/client";
 
 export const updateDevice = async (request: Request, response: Response) => {
   const id = request.params.id;
@@ -14,7 +15,7 @@ export const updateDevice = async (request: Request, response: Response) => {
 
     if (!existingRecord) {
       response.status(404).json({
-        message: `There is no device with id ${id} in the database.`,
+        message: `Error: there is no device with id ${id} in the database.`,
         data: null,
       });
       return;
@@ -22,7 +23,7 @@ export const updateDevice = async (request: Request, response: Response) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "";
     response.status(500).json({
-      message: `Impossible to fetch device id ${id} from database. ${errorMessage}`,
+      message: `Error: impossible to fetch device id ${id} from database. ${errorMessage}`,
       data: null,
     });
     return;
@@ -37,7 +38,7 @@ export const updateDevice = async (request: Request, response: Response) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "";
     response.status(400).json({
-      message: `Invalid update request: ${errorMessage}`,
+      message: `Error: invalid update request. ${errorMessage}`,
       data: null,
     });
     return;
@@ -45,6 +46,7 @@ export const updateDevice = async (request: Request, response: Response) => {
 
   let updatedRecord;
   console.log("Attempting update");
+
   try {
     updatedRecord = await prismaClient.device.update({
       where: { id },
@@ -55,11 +57,23 @@ export const updateDevice = async (request: Request, response: Response) => {
       data: updatedRecord,
     });
   } catch (error) {
+    // Handling separately cases where the error was caused by trying to update a device with an existing name or id
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      response.status(400).json({
+        message: `Error: the name ${newValidatedRecord.name} or the id ${newValidatedRecord.id} is already present in the database and cannot be duplicated.`,
+        data: null,
+      });
+      return;
+    }
+
     const errorMessage = error instanceof Error ? error.message : "";
     console.log(errorMessage);
 
     response.status(500).json({
-      message: `Could not update device ${existingRecord.name} (id ${id}). ${errorMessage}`,
+      message: `Error: could not update device ${existingRecord.name} (id ${id}). ${errorMessage}`,
       data: null,
     });
     return;

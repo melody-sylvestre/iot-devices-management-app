@@ -3,6 +3,7 @@ import type { Request, Response } from "express";
 import { prismaClient } from "../prisma/client";
 import { validateAndMapNewDataToDeviceModel } from "../validators";
 import { testDevices } from "../testUtils/devices";
+import { Prisma } from "@prisma/client";
 
 jest.mock("../prisma/client");
 
@@ -50,6 +51,28 @@ describe("registerDevice", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       message: "Error: random is not a supported device type.",
+      data: null,
+    });
+  });
+
+  test("If the device was not created because there is already another device with the same name in the database, it returns a 400 status and JSON object with an error message.", async () => {
+    const newDevice = testDevices[0];
+
+    const req = {
+      body: newDevice,
+    };
+
+    jest.mocked(prismaClient.device.create).mockRejectedValue(
+      new Prisma.PrismaClientKnownRequestError("Duplicate name", {
+        code: "P2002",
+        clientVersion: "6.12.0",
+      })
+    );
+    await registerDevice(req as Request, res as Response);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: `Error: the name ${newDevice.name} is already present in the database and cannot be duplicated.`,
       data: null,
     });
   });

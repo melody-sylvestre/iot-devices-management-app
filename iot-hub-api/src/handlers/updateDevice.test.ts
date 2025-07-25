@@ -5,6 +5,8 @@ import { validateAndMapNewDataToDeviceModel } from "../validators";
 import { v4 } from "uuid";
 import { testDevices } from "../testUtils/devices";
 import { defaultDevice } from "../definitions/constants";
+import { Prisma } from "@prisma/client";
+
 jest.mock("../prisma/client");
 
 describe("updateDevice", () => {
@@ -24,7 +26,7 @@ describe("updateDevice", () => {
     await updateDevice(req as Request, res as Response);
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({
-      message: `There is no device with id ${id} in the database.`,
+      message: `Error: there is no device with id ${id} in the database.`,
       data: null,
     });
   });
@@ -39,7 +41,7 @@ describe("updateDevice", () => {
     await updateDevice(req as Request, res as Response);
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
-      message: `Impossible to fetch device id ${id} from database. Database error.`,
+      message: `Error: impossible to fetch device id ${id} from database. Database error.`,
       data: null,
     });
   });
@@ -62,7 +64,7 @@ describe("updateDevice", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       message:
-        "Invalid update request: Error: random is not a supported device type.",
+        "Error: invalid update request. Error: random is not a supported device type.",
       data: null,
     });
   });
@@ -90,7 +92,49 @@ describe("updateDevice", () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       message:
-        "Invalid update request: ✖ Invalid input: expected null, received number\n  → at target_value_1",
+        "Error: invalid update request. ✖ Invalid input: expected null, received number\n  → at target_value_1",
+      data: null,
+    });
+  });
+
+  test("If the device was not updated because there is already another device with the same name in the database, it returns a 400 status and JSON object with an error message.", async () => {
+    const existingRecord = validateAndMapNewDataToDeviceModel({
+      id: v4(),
+      name: "Kitchen Light",
+      type: "Light Switch",
+      is_enabled: true,
+      is_on: false,
+    });
+
+    const updateData = {
+      name: "device name",
+      is_on: true,
+    };
+
+    const proposedUpdate = {
+      ...existingRecord,
+      ...updateData,
+    };
+
+    const req = {
+      body: updateData,
+      params: { id: existingRecord.id },
+    } as Partial<Request>;
+
+    jest
+      .mocked(prismaClient.device.findUnique)
+      .mockResolvedValue(existingRecord);
+    jest.mocked(prismaClient.device.update).mockRejectedValue(
+      new Prisma.PrismaClientKnownRequestError("Duplicate name", {
+        code: "P2002",
+        clientVersion: "6.12.0",
+      })
+    );
+    await updateDevice(req as Request, res as Response);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      message: `Error: the name ${proposedUpdate.name} or the id ${proposedUpdate.id} is already present in the database and cannot be duplicated.`,
       data: null,
     });
   });
@@ -153,7 +197,7 @@ describe("updateDevice", () => {
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
-      message: `Could not update device ${existingRecord.name} (id ${existingRecord.id}). Error message.`,
+      message: `Error: could not update device ${existingRecord.name} (id ${existingRecord.id}). Error message.`,
       data: null,
     });
   });
