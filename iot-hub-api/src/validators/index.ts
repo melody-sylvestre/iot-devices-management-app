@@ -1,1 +1,1 @@
-export { validateAndParseNewDevice } from "./validateAndParseNewDevice";
+export { validateAndMapNewDataToDeviceModel } from "./validateAndMapNewDataToDeviceModel";

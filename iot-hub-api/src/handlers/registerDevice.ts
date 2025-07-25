@@ -1,64 +1,70 @@
-// import type { Request, Response } from "express";
-// import { validateAndParseNewDevice } from "../validators/validateAndParseNewDevice";
-// // import { Device } from "@prisma/client";
-// // FIXME: fix imports to commonjs so that I can use the type from prisma
-// // import type { DeviceRequest } from "../types";
-// // import { prismaClient } from "../prisma/client";
-// import { v4 } from "uuid";
+import type { Request, Response } from "express";
+import { prismaClient } from "../prisma/client";
+import { v4 } from "uuid";
+import { validateAndMapNewDataToDeviceModel } from "../validators";
+import { Prisma } from "@prisma/client";
 
-// export const registerDevice = async (request: Request, response: Response) => {
-//   const data = request.body;
-//   const new_id = v4();
-//   let newDevice;
-//   try {
-//     newDevice = validateAndParseNewDevice(data);
-//   } catch (error) {
-//     const errorMessage =
-//       error instanceof Error
-//         ? error.message
-//         : "An error occured while validating the details of the new device.";
-//     response.status(400).json({ message: errorMessage, data: null });
-//     return;
-//   }
+export const registerDevice = async (request: Request, response: Response) => {
+  console.log("Parsing new device details...");
 
-//   // let registeredDevice: Device;
+  const data = request.body;
+  let newDevice;
 
-//   // try {
-//   //   registeredDevice = await prismaClient.device.create({
-//   //     data: {
-//   //       id: new_id,
-//   //       name: newDevice.name,
-//   //       type: newDevice.type,
-//   //       is_enabled: newDevice.is_enabled,
-//   //       Thermostat: {
-//   //         create: {
-//   //           current_value: null,
-//   //           target_value: null,
-//   //         },
-//   //       },
-//   //     },
-//   //   });
-//   //   response.status(201).json({
-//   //     message: "Successfully registered new device",
-//   //     data: registeredDevice,
-//   //   });
-//   // } catch (error) {
-//   //   response.status(500).json({
-//   //     message: "Error: impossible to register the new device",
-//   //     data: null,
-//   //   });
-//   // }
+  try {
+    newDevice = validateAndMapNewDataToDeviceModel(data);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "An error occurred while validating the details of the new device.";
+    console.log(errorMessage);
 
-//   return;
+    response.status(400).json({ message: errorMessage, data: null });
+    return;
+  }
 
-//   // (validate unique name?) - should be done by Prisma
+  console.log("Attempting to add new device to the database.");
 
-//   // transaction with:
-//   //    create record in devices - get id
-//   //    create record in matching table
-//   // return new record
-// };
+  newDevice.id = v4();
+  let registeredDevice;
+  let message;
 
-// // const buildCreateRequest = (newDevice: DeviceRequest) => {
-// //   const newID = v4();
-// // };
+  try {
+    registeredDevice = await prismaClient.device.create({
+      data: { ...newDevice },
+    });
+
+    message = "Successfully registered new device";
+    console.log(message);
+
+    response.status(201).json({
+      message: message,
+      data: registeredDevice,
+    });
+  } catch (error) {
+    // Handling separately cases where the error was caused by trying to register a device with an existing name
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      message = `Error: the name ${newDevice.name} is already present in the database and cannot be duplicated.`;
+      console.log(message);
+
+      response.status(400).json({
+        message: message,
+        data: null,
+      });
+      return;
+    }
+
+    const errorMessage = error instanceof Error ? error.message : "";
+    message = `Error: impossible to register the new device. ${errorMessage}`;
+    console.log(message);
+
+    response.status(500).json({
+      message: message,
+      data: null,
+    });
+  }
+  return;
+};
