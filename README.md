@@ -35,7 +35,7 @@ I chose to use a PostGreSQL database, because it can also handle more data types
 
 I wanted to make it easy for another developer to add a new type of device. It should be easy to change the database structure. I used the ORM [Prisma](https://www.prisma.io/). It allows to define and change the `devices` table in a schema file. It also provides commands to synchronise the database with the schema and save the schema changes in migration files.
 
-I also sought to minimize the number of files that a developer would have to modify to add a new type of device. The validation rules for the different device types are defined once in the codebase. Adding a new type of device only requires to add a Zod schema for it!
+I also sought to minimize the number of files that a developer would have to modify to add a new type of device. The validation rules for the different device types are defined once in the codebase. Adding a new type of device mainly requires to add a Zod schema for it! See the section **How to add a new device type** at the end of the Readme for more details.
 
 ### Robustness
 
@@ -47,9 +47,9 @@ In a real-life scenario, this API would probably additional security features su
 
 I used unit tests to thoroughly test any possible outcome for each of the endpoints. I did not implement integration tests due to time constraints, but they could be a future addition to the QA process, as they allow to test the interactions between the database and the API.
 
-I used `console.log` for the logging for simplicity, but if this API was to be deployed on the cloud (e.g. Google Cloud Platform), I would have used a dedicated logging library such as [winston](https://github.com/winstonjs/winston). It provides several levels of logging and tools to correlate log entries, which allows for more efficient monitoring of a service.
+I used `console.log` for the logging for simplicity, but if this API was to be deployed on the cloud (e.g. Google Cloud Platform), I would use a dedicated logging library such as [winston](https://github.com/winstonjs/winston). It provides several levels of logging and tools to correlate log entries, which allows for more efficient monitoring of a service.
 
-The data returned by the API endpoints are all of the same type: `null`, `Device` or `Array<Device>`. This makes the endpoints easy to use by a frontend app. Future work could include adding an Open API Schema endpoint. It consist of adding an endpoint from which the types of the API responses can be queried. They can then be used by the frontend app, which ensures data types consistency across the stack.
+The data returned by the API endpoints are all of the same type: `null`, `Device` or `Array<Device>`. This makes the endpoints easy to use by a frontend app. Future work could include adding an Open API Schema endpoint. It consist in adding an endpoint from which the types of the API responses can be queried. They can then be used by the frontend app, which ensures data types consistency across the stack.
 
 ## Prerequisites
 
@@ -84,7 +84,7 @@ The data returned by the API endpoints are all of the same type: `null`, `Device
 
    This initialises the database in a Docker component following the Prisma schema defined in `prisma/schema.prisma` and installs Prisma if necessary.
 
-   This command also creates an Adminer service, which is a database management tool. You can visualise and change the database at http://localhost:8080, using the environment variables defined in `.env`:
+   This command also creates an Adminer service, which is a lightweight database management tool. You can visualise and change the database at http://localhost:8080, using the environment variables defined in `.env`:
 
    ```
    System > PostgreSQL
@@ -120,55 +120,47 @@ The data returned by the API endpoints are all of the same type: `null`, `Device
 
 ## How to use the API
 
-For all the endpoints, the response format is JSON with the format
-
-```
-{
-    "message": "a message",
-    "data" : null | Device object | Array <Device>
-}
-
-```
-
 ### Fetching the list of registered devices
 
 ```
+
 GET /devices
+
 ```
 
 **Responses**
 
 - Success: `200 OK`
 
-  It returns a success message and an array of `Device` objects. Each element of the array show the properties of a device. If there no records in the data base, `data` will be an empty array.
+  It returns a success message and an array of `Device` objects. Each element of the array show the properties of a device. If there is no records in the database, `data` will be an empty array.
 
   Example of response body
 
   ```
   {
-      "message": Found 2 devices",
-      "data" : [{
-          "id": "0bed0973-3d39-4de7-9987-688f04c02f6c",
-          "name": "Porch Light",
-          "type": "Light Switch",
-          "is_enabled": true,
-          "is_on": false,
-          "current_value_1": null,
-          "target_value_1": null,
-          "setting_as_int_scale_1": null,
-          "setting_as_string_1": null
-      },
-      {
-          "id": "6eeafae8-1153-408a-94cf-737fe7b953d4",
-          "name": "Living Room Thermostat",
-          "type": "Thermostat",
-          "is_enabled": true,
-          "is_on": null,
-          "current_value_1": 14,
-          "target_value_1": 22,
-          "setting_as_int_scale_1": null,
-          "setting_as_string_1": null
-      }]
+    "message": Found 2 devices",
+    "data" : [{
+      "id": "0bed0973-3d39-4de7-9987-688f04c02f6c",
+      "name": "Porch Light",
+      "type": "Light Switch",
+      "is_enabled": true,
+      "is_on": false,
+      "current_value_1": null,
+      "target_value_1": null,
+      "setting_as_int_scale_1": null,
+      "setting_as_string_1": null
+    },
+    {
+      "id": "6eeafae8-1153-408a-94cf-737fe7b953d4",
+      "name": "Living Room Thermostat",
+      "type": "Thermostat",
+      "is_enabled": true,
+      "is_on": null,
+      "current_value_1": 14,
+      "target_value_1": 22,
+      "setting_as_int_scale_1": null,
+      "setting_as_string_1": null
+    }]
   }
   ```
 
@@ -196,15 +188,15 @@ Example of a valid request body:
 
 ```
 {
-     "name": "New Device",
-     "type": "Thermostat",
-     "is_enabled": true,
-     "current_value_1": 14,
-     "target_value_1": 22
+"name": "New Device",
+"type": "Thermostat",
+"is_enabled": true,
+"current_value_1": 14,
+"target_value_1": 22
 }
 ```
 
-This is also a valid request body, because all the fields that are not relevant for the device type "Light Switch" were set to `null`:
+This is also a valid request body, because all the fields that are not relevant for the device type "Light Switch" are set to `null`:
 
 ```
 {
@@ -232,15 +224,15 @@ This is also a valid request body, because all the fields that are not relevant 
   {
     "message": "Successfully registered new device",
     "data": {
-        "id": "22a8e77a-7efb-45d5-b5f3-cdfc74f8991d",
-        "name": "New Light",
-        "type": "Light Switch",
-        "is_enabled": true,
-        "is_on": false,
-        "current_value_1": null,
-        "target_value_1": null,
-        "setting_as_int_scale_1": null,
-        "setting_as_string_1": null
+    "id": "22a8e77a-7efb-45d5-b5f3-cdfc74f8991d",
+    "name": "New Light",
+    "type": "Light Switch",
+    "is_enabled": true,
+    "is_on": false,
+    "current_value_1": null,
+    "target_value_1": null,
+    "setting_as_int_scale_1": null,
+    "setting_as_string_1": null
     }
   }
   ```
@@ -266,9 +258,8 @@ This is also a valid request body, because all the fields that are not relevant 
 
   ```
     {
-        "message": "Error",
-        "data" : null
-
+      "message": "Error",
+      "data" : null
     }
   ```
 
@@ -300,7 +291,7 @@ GET /devices/{id}
         "setting_as_int_scale_1": null,
         "setting_as_string_1": null
         }
-   }
+    }
   ```
 
 - Failure: `404 Not Found`
@@ -310,10 +301,10 @@ GET /devices/{id}
   Example of response body
 
   ```
-   {
-        "message": "Error: there is no device with id 735aaae1-b75d-43fd-8b1c-87f345fd3a00 in the database.",
-        "data": null
-   }
+  {
+    "message": "Error: there is no device with id 735aaae1-b75d-43fd-8b1c-87f345fd3a00 in the database.",
+    "data": null
+  }
   ```
 
 - Failure: `500 Internal Server Error `
@@ -324,9 +315,8 @@ GET /devices/{id}
 
   ```
     {
-        "message": "Error",
-        "data" : null
-
+      "message": "Error",
+      "data" : null
     }
   ```
 
@@ -340,7 +330,7 @@ This endpoint accepts a JSON body. For example:
 
 ```
 {
- "is_on": true
+  "is_on": true
 }
 ```
 
@@ -353,20 +343,20 @@ This endpoint accepts a JSON body. For example:
   Example of response body
 
   ```
-   {
-        "message": "Successfully updated device Bedroom Light (id 735aaae1-b75d-43fd-8b1c-87f345fd3acf).",
-        "data": {
-            "id": "735aaae1-b75d-43fd-8b1c-87f345fd3acf",
-            "name": "Bedroom Light",
-            "type": "Light Switch",
-            "is_enabled": false,
-            "is_on": true,
-            "current_value_1": null,
-            "target_value_1": null,
-            "setting_as_int_scale_1": null,
-            "setting_as_string_1": null
-        }
-   }
+  {
+    "message": "Successfully updated device Bedroom Light (id 735aaae1-b75d-43fd-8b1c-87f345fd3acf).",
+    "data": {
+      "id": "735aaae1-b75d-43fd-8b1c-87f345fd3acf",
+      "name": "Bedroom Light",
+      "type": "Light Switch",
+      "is_enabled": false,
+      "is_on": true,
+      "current_value_1": null,
+      "target_value_1": null,
+      "setting_as_int_scale_1": null,
+      "setting_as_string_1": null
+    }
+  }
   ```
 
 - Failure: `400 Bad Request`
@@ -377,8 +367,8 @@ This endpoint accepts a JSON body. For example:
 
   ```
     {
-        "message": "Error: invalid update request. ✖ Unrecognized key: \"random\"",
-        "data": null
+      "message": "Error: invalid update request. ✖ Unrecognized key: \"random\"",
+      "data": null
     }
   ```
 
@@ -389,10 +379,10 @@ This endpoint accepts a JSON body. For example:
   Example of response body
 
   ```
-   {
-        "message": "Error: there is no device with id 735aaae1-b75d-43fd-8b1c-87f345fd3a00 in the database.",
-        "data": null
-   }
+  {
+    "message": "Error: there is no device with id 735aaae1-b75d-43fd-8b1c-87f345fd3a00 in the database.",
+    "data": null
+  }
   ```
 
 - Failure: `500 Internal Server Error `
@@ -403,9 +393,8 @@ This endpoint accepts a JSON body. For example:
 
   ```
     {
-        "message": "Error",
-        "data" : null
-
+      "message": "Error",
+      "data" : null
     }
   ```
 
@@ -425,8 +414,8 @@ DELETE /devices/{id}
 
   ```
     {
-        "message": "Bedroom Light was successfully deleted",
-        "data": null
+      "message": "Bedroom Light was successfully deleted",
+      "data": null
     }
   ```
 
@@ -451,9 +440,8 @@ DELETE /devices/{id}
 
   ```
     {
-        "message": "Error",
-        "data" : null
-
+      "message": "Error",
+      "data" : null
     }
   ```
 
@@ -464,7 +452,6 @@ In `src/definitions/types.ts`:
 - Add the name of the new device to the `DEVICE_TYPES` array and to the `DeviceType` type.
 
   ```
-  //NOTE: add any new Device type to these variables
   const DEVICE_TYPES = ["Thermostat", "Light Switch", "Security Camera"] as const;
   type DeviceType = "Thermostat" | "Light Switch" | "Security Camera";
   ```
@@ -475,18 +462,65 @@ In `src/definitions/types.ts`:
   const securityCameraSchema = z.strictObject({
     ...requiredDevicePropertiesSchema.shape,
     ...optionalDevicePropertiesSchema.shape,
-      is_on: z.boolean(),
-      setting_as_string_1: z.url().nullable(), //URL where the video of the camera is livestreamed
+    is_on: z.boolean(),
+    setting_as_string_1: z.url().nullable(), //URL where the video of the camera is livestreamed
   });
   ```
 
 - Add the new Zod schema to the DEVICE_VALIDATION_RULES
-    ```
-      // NOTE: Any new device type MUST be added to the variable below in order to be supported by the API.
-      export const DEVICE_VALIDATION_RULES: Record<DeviceType, z.ZodSchema> = {
+  ```
+    export const DEVICE_VALIDATION_RULES: Record<DeviceType, z.ZodSchema> = {
       Thermostat: thermostatSchema,
       "Light Switch": lightSwitchSchema,
       "Security Camera": securityCameraSchema,
       };
-    ```
+  ```
 
+Restart the API: you can now register a device with this new type.
+
+If the new device requires a new column, follow these additional instructions. Let's consider a new device type called Window Alarm, following this schema:
+
+```
+const windowAlarmSchema = z.strictObject({
+  ...requiredDevicePropertiesSchema.shape,
+  ...optionalDevicePropertiesSchema.shape,
+  is_on: z.boolean(),
+  alarm_state: z.boolean(), //true if the alarm is triggered.
+  });
+```
+
+The column alarm_state needs to be added to:
+
+- `optionalDevicePropertiesSchema` (still in `src/definitions/types.ts`):
+  ```
+    const optionalDevicePropertiesSchema = z.object({
+      //[...]
+      alarm_state: z.null().optional(),
+    });
+  ```
+- `defaultDevice` in `src/definitions/constants.ts`
+
+  ```
+    export const defaultDevice: Device = {
+      //[...]
+      alarm_state: null,
+    };
+  ```
+
+- the `device Model` in `prisma/schema.prisma`. Note the `?` next to the type as this field needs to be optional.
+
+  ```
+  model Device {
+    // [...]
+    alarm_state Boolean?
+  }
+  ```
+
+Run the following commands to update the database schema and the prisma types
+
+```
+npm run db:push
+npm run db:generate
+```
+
+Restart the API - the new type can now be used.
