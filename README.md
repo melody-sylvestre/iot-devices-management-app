@@ -456,3 +456,36 @@ DELETE /devices/{id}
 
     }
   ```
+
+## How to add a new device type
+
+In `src/definitions/types.ts`:
+
+- Add the name of the new device to the `DEVICE_TYPES` array and to the `DeviceType` type.
+
+  ```
+  //NOTE: add any new Device type to these variables
+  const DEVICE_TYPES = ["Thermostat", "Light Switch", "Security Camera"] as const;
+  type DeviceType = "Thermostat" | "Light Switch" | "Security Camera";
+  ```
+
+- Define a new Zod schema for the new device type, following this model. It **must** be a `z.strictObject()` so that the validation step can reject any unrecognized keys. It **must** include `requiredDevicePropertiesSchema` and `optionalDevicePropertiesSchema` to ensure retro-compatibility with previous database records.
+
+  ```
+  const securityCameraSchema = z.strictObject({
+    ...requiredDevicePropertiesSchema.shape,
+    ...optionalDevicePropertiesSchema.shape,
+      is_on: z.boolean(),
+      setting_as_string_1: z.url().nullable(),
+  });
+  ```
+
+  - Add the new Zod schema to the DEVICE_VALIDATION_RULES
+    ```
+      // NOTE: Any new device type MUST be added to the variable below in order to be supported by the API.
+      export const DEVICE_VALIDATION_RULES: Record<DeviceType, z.ZodSchema> = {
+      Thermostat: thermostatSchema,
+      "Light Switch": lightSwitchSchema,
+      "Security Camera": securityCameraSchema,
+      };
+    ```
