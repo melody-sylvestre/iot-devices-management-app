@@ -1,8 +1,17 @@
 import * as z from "zod";
 
 //NOTE: add any new Device type to these variables
-const DEVICE_TYPES = ["Thermostat", "Light Switch", "Security Camera"] as const;
-type DeviceType = "Thermostat" | "Light Switch" | "Security Camera";
+const DEVICE_TYPES = [
+  "Thermostat",
+  "Light Switch",
+  "Security Camera",
+  "Window Alarm",
+] as const;
+type DeviceType =
+  | "Thermostat"
+  | "Light Switch"
+  | "Security Camera"
+  | "Window Alarm";
 
 // NOTE: All devices validation schemas mut be defined from requiredDevicePropertiesSchema and optionalDevicePropertiesSchema
 
@@ -21,6 +30,7 @@ const optionalDevicePropertiesSchema = z.object({
   target_value_1: z.null().optional(),
   setting_as_int_scale_1: z.null().optional(),
   setting_as_string_1: z.null().optional(),
+  alarm_state: z.null().optional(),
 });
 
 const thermostatSchema = z.strictObject({
@@ -43,9 +53,17 @@ const securityCameraSchema = z.strictObject({
   setting_as_string_1: z.url().nullable(), //URL where the video of the camera is livestreamed
 });
 
+const windowAlarmSchema = z.strictObject({
+  ...requiredDevicePropertiesSchema.shape,
+  ...optionalDevicePropertiesSchema.shape,
+  is_on: z.boolean(),
+  alarm_state: z.boolean(), //true if the alarm is triggered.
+});
+
 // NOTE: Any new device type MUST be added to the variable below in order to be supported by the API.
 export const DEVICE_VALIDATION_RULES: Record<DeviceType, z.ZodSchema> = {
   Thermostat: thermostatSchema,
   "Light Switch": lightSwitchSchema,
   "Security Camera": securityCameraSchema,
+  "Window Alarm": windowAlarmSchema,
 };

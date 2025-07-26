@@ -11,4 +11,5 @@ export const defaultDevice: Device = {
   target_value_1: null,
   setting_as_int_scale_1: null,
   setting_as_string_1: null,
+  alarm_state: null,
 };

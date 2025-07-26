@@ -17,6 +17,7 @@ model Device {
     target_value_1         Float?
     setting_as_int_scale_1 Int?
     setting_as_string_1    String?  @db.VarChar(255)
+    alarm_state            Boolean?
 
     @@map("devices")
 }

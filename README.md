@@ -2,6 +2,10 @@
 
 A Typescript API to manage IoT devices in a smart home
 
+[Design](##Design)
+
+[Pre-requisites](##Prerequisites)
+
 ## Design
 
 I have designed this API around 3 core concepts: flexibility, maintainability and robustness.
@@ -464,7 +468,6 @@ In `src/definitions/types.ts`:
 - Add the name of the new device to the `DEVICE_TYPES` array and to the `DeviceType` type.
 
   ```
-  //NOTE: add any new Device type to these variables
   const DEVICE_TYPES = ["Thermostat", "Light Switch", "Security Camera"] as const;
   type DeviceType = "Thermostat" | "Light Switch" | "Security Camera";
   ```
@@ -480,12 +483,61 @@ In `src/definitions/types.ts`:
   });
   ```
 
-  - Add the new Zod schema to the DEVICE_VALIDATION_RULES
-    ```
-      // NOTE: Any new device type MUST be added to the variable below in order to be supported by the API.
-      export const DEVICE_VALIDATION_RULES: Record<DeviceType, z.ZodSchema> = {
-      Thermostat: thermostatSchema,
-      "Light Switch": lightSwitchSchema,
-      "Security Camera": securityCameraSchema,
-      };
-    ```
+- Add the new Zod schema to the DEVICE_VALIDATION_RULES
+
+  ```
+    export const DEVICE_VALIDATION_RULES: Record<DeviceType, z.ZodSchema> = {
+    Thermostat: thermostatSchema,
+    "Light Switch": lightSwitchSchema,
+    "Security Camera": securityCameraSchema,
+    };
+  ```
+
+Restart the API: you can now register a device with this new type.
+
+If the new device requires a new column, follow these additional instructions. Let's consider a new device type called Window Alarm, following this schema:
+
+```
+  const windowAlarmSchema = z.strictObject({
+      ...requiredDevicePropertiesSchema.shape,
+      ...optionalDevicePropertiesSchema.shape,
+      is_on: z.boolean(),
+      alarm_state: z.boolean(), //true if the alarm is triggered.
+    });
+```
+
+The column alarm_state needs to be added to:
+
+- `optionalDevicePropertiesSchema` (still in `src/definitions/types.ts`):
+
+```
+  const optionalDevicePropertiesSchema = z.object({
+    //[...]
+    alarm_state: z.null().optional(),
+  });
+```
+
+- `defaultDevice` in `src/definitions/constants.ts`
+  ```
+    export const defaultDevice: Device = {
+      //[...]
+      alarm_state: null,
+    };
+  ```
+- the `device Model` in `prisma/schema.prisma`. Note the `?` next to the type as this field needs to be optional.
+
+  ```
+  model Device {
+  // [...]
+    alarm_state            Boolean?
+  }
+  ```
+
+Run the following commands to update the database schema and the prisma types
+
+```
+  npm run db:push
+  npm run db:generate
+```
+
+Restart the API - the new type can now be used.
