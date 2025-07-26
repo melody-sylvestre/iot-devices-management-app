@@ -2,9 +2,9 @@
 
 A Typescript API to manage IoT devices in a smart home
 
-[Design](##-design)
+[Design](##Design)
 
-[Prerequisites](##-prerequisites)
+[Prerequisites](##Prerequisites)
 
 ## Design
 
