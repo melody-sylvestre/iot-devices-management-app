@@ -476,7 +476,7 @@ In `src/definitions/types.ts`:
     ...requiredDevicePropertiesSchema.shape,
     ...optionalDevicePropertiesSchema.shape,
       is_on: z.boolean(),
-      setting_as_string_1: z.url().nullable(),
+      setting_as_string_1: z.url().nullable(), //URL where the video of the camera is livestreamed
   });
   ```
 

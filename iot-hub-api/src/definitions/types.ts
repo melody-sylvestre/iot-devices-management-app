@@ -40,7 +40,7 @@ const securityCameraSchema = z.strictObject({
   ...requiredDevicePropertiesSchema.shape,
   ...optionalDevicePropertiesSchema.shape,
   is_on: z.boolean(),
-  setting_as_string_1: z.url().nullable(),
+  setting_as_string_1: z.url().nullable(), //URL where the video of the camera is livestreamed
 });
 
 // NOTE: Any new device type MUST be added to the variable below in order to be supported by the API.
