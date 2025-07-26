@@ -35,7 +35,7 @@ I chose to use a PostGreSQL database, because it can also handle more data types
 
 I wanted to make it easy for another developer to add a new type of device. It should be easy to change the database structure. I used the ORM [Prisma](https://www.prisma.io/). It allows to define and change the `devices` table in a schema file. It also provides commands to synchronise the database with the schema and save the schema changes in migration files.
 
-I also sought to minimize the number of files that a developer would have to modify to add a new type of device. The validation rules for the different device types are defined once in the codebase. Adding a new type of device mainly requires to add a Zod schema for it! See the section **How to add a new device type** at the end of the Readme for more details.
+I also sought to minimize the number of files that a developer would have to modify to add a new type of device. The validation rules for the different device types are defined once in the codebase. Adding a new type of device mainly requires to add a Zod schema for it! See the section [How to add a new device type](##how-to-add-a-new-device-type) at the end of the Readme for more details.
 
 ### Robustness
 
